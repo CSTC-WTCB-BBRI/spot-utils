@@ -61,3 +61,16 @@ To exit the virtual environment, simply run:
 ```bash
 deactivate
 ```
+
+### Python Dependencies
+
+To install this project's Python dependencies to your newly created virtual environment, run:
+
+```bash
+pip install -r requirements.txt
+```
+
+|   Package             |   Description     |
+|   ---                 |   ---             |
+|   Django              |   [Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design](https://pypi.org/project/Django/)    |
+|   djangorestframework |   [Awesome web-browsable Web APIs](https://pypi.org/project/djangorestframework/)    |
