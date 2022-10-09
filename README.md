@@ -74,3 +74,11 @@ pip install -r requirements.txt
 |   ---                 |   ---             |
 |   Django              |   [Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design](https://pypi.org/project/Django/)    |
 |   djangorestframework |   [Awesome web-browsable Web APIs](https://pypi.org/project/djangorestframework/)    |
+
+### Set Up Database
+
+to set the database, cd to the root of the project's directory and run:
+
+```bash
+python manage.py migrate
+```
