@@ -82,3 +82,10 @@ to set the database, cd to the root of the project's directory and run:
 ```bash
 python manage.py migrate
 ```
+
+### Start Web Server
+
+cd to the root of the project's directory and run:
+```bash
+python manage.py runserver
+```
