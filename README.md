@@ -83,6 +83,13 @@ to set the database, cd to the root of the project's directory and run:
 python manage.py migrate
 ```
 
+### Create Django Superuser
+
+cd to the root of the project's directory and run:
+```bash
+python manage.py createsuperuser
+```
+
 ### Start Web Server
 
 cd to the root of the project's directory and run:
