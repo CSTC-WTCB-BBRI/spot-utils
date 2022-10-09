@@ -96,3 +96,9 @@ cd to the root of the project's directory and run:
 ```bash
 python manage.py runserver
 ```
+
+### API
+
+```TEMPORARY SECTION```
+
+follow [this](http://127.0.0.1:8000/api/) link to get all public api routes
