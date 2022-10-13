@@ -130,4 +130,4 @@ python manage.py runserver
 
 ```TEMPORARY SECTION```
 
-follow [this](http://127.0.0.1:8000/api/) link to get all public api routes
+First, run the server. Then, follow [this](http://127.0.0.1:8000/api/) link to get all public api routes
