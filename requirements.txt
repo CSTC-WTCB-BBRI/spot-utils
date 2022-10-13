@@ -1,2 +1,5 @@
 Django==4.1
 djangorestframework
+bosdyn-client
+bosdyn-mission
+bosdyn-choreography-client

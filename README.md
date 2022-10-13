@@ -74,6 +74,13 @@ pip install -r requirements.txt
 |   ---                 |   ---             |
 |   Django              |   [Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design](https://pypi.org/project/Django/)    |
 |   djangorestframework |   [Awesome web-browsable Web APIs](https://pypi.org/project/djangorestframework/)    |
+|   bosdyn-client       |   [The bosdyn-client wheel contains client interfaces for interacting with the Boston Dynamics Spot API. The client interfaces implement the Remote Procedure Calls (RPCs) defined in the bosdyn-api wheel](https://pypi.org/project/bosdyn-client/)    |
+|   bosdyn-mission      |   [The bosdyn-mission wheel contains client interfaces and helper functionality for managing missions, which are part of the Boston Dynamics Spot API](https://pypi.org/project/bosdyn-mission/)    |
+|   bosdyn-choreography-client  |   [The bosdyn-choreography-client wheel contains client interfaces for interacting with the Boston Dynamics Choreography API](https://pypi.org/project/bosdyn-choreography-client/)    |
+
+
+
+
 
 ### Set Up Database
 
