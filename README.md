@@ -6,6 +6,20 @@ This repository aims at developping a Web Interface to control and interact with
 
 This project is meant to be run on linux machines.
 
+### Environment Variables
+
+This project's python scripts use environment variables. These are stored within a ```/api/scripts/.env```.
+
+Create the .env file and paste the following inside it (values are placeholders):
+
+```bash
+BOSDYN_CLIENT_USERNAME=user 
+BOSDYN_CLIENT_PASSWORD=password
+ROBOT_IP=192.168.80.3
+ROBOT_ESTOP_TIMEOUT_SEC=5
+BOSDYN_CLIENT_LOGGING_VERBOSE=True
+```
+
 ### ASDF
 
 First, make sure ASDF is installed on your system.
@@ -64,6 +78,14 @@ deactivate
 
 ### Python Dependencies
 
+The [Pillow](https://pillow.readthedocs.io/en/stable/installation.html#building-on-macos) python package has pre-requisites. If you are on Ubuntu, execute the following command:
+
+```bash
+sudo apt-get install libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev \
+    libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python3-tk \
+    libharfbuzz-dev libfribidi-dev libxcb1-dev
+```
+
 To install this project's Python dependencies to your newly created virtual environment, run:
 
 ```bash
@@ -77,10 +99,10 @@ pip install -r requirements.txt
 |   bosdyn-client       |   [The bosdyn-client wheel contains client interfaces for interacting with the Boston Dynamics Spot API. The client interfaces implement the Remote Procedure Calls (RPCs) defined in the bosdyn-api wheel](https://pypi.org/project/bosdyn-client/)    |
 |   bosdyn-mission      |   [The bosdyn-mission wheel contains client interfaces and helper functionality for managing missions, which are part of the Boston Dynamics Spot API](https://pypi.org/project/bosdyn-mission/)    |
 |   bosdyn-choreography-client  |   [The bosdyn-choreography-client wheel contains client interfaces for interacting with the Boston Dynamics Choreography API](https://pypi.org/project/bosdyn-choreography-client/)    |
-
-
-
-
+|   Pillow  |   [Pillow is the friendly PIL fork by Alex Clark and Contributors. PIL is the Python Imaging Library by Fredrik Lundh and Contributors](https://pypi.org/project/Pillow/)    |
+|   six  |   [Six is a Python 2 and 3 compatibility library](https://pypi.org/project/six/)    |
+|   pyqt5  |   [Qt is set of cross-platform C++ libraries that implement high-level APIs for accessing many aspects of modern desktop and mobile systems](https://pypi.org/project/PyQt5/)    |
+|   python-dotenv  |   [Python-dotenv reads key-value pairs from a .env file and can set them as environment variables](https://pypi.org/project/python-dotenv/)    |
 
 ### Set Up Database
 
