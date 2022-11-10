@@ -1,18 +1,42 @@
-from .estop_nogui import EstopNoGui
+# Copyright (c) 2022 Boston Dynamics, Inc.  All rights reserved.
+#
+# Downloading, reproducing, distributing or otherwise using the SDK Software
+# is subject to the terms and conditions of the Boston Dynamics Software
+# Development Kit License (20191101-BDSDK-SL).
 
-import bosdyn.client.util
-from bosdyn.client.estop import EstopClient, EstopEndpoint, EstopKeepAlive
-from bosdyn.client.robot_state import RobotStateClient
+# Some changes were made to only keep needed functionalities or add missing functionalities:
+#   * Removed unused imports
+#   * Removed unused functions and methods
+#   * Added comments for code sections
+#   * Added docstrings to functions
+#   * Included call to EstopNoGui (no need to setup an Estop prior to this script execution) within the main function
+#   * Included a getSpotAuthentication function to authenticate user on Spot 
+#   * Added instruction to sit before shutting down in the hello_spot function
+#   * Removed the 'Capture an image' instruction
+#   * Added a state_client argument to the hello_spot function
+# See https://github.com/boston-dynamics/spot-sdk/blob/master/python/examples/hello_spot/hello_spot.py for the original file
 
-import argparse
+#!/usr/bin/env python
+"""Orders spot to execute a series of basic commands"""
+
+
+# Imports
 import os
 import sys
 import time
 
+from dotenv import load_dotenv
+
+## Boston Dynamics
 import bosdyn.client.util
+from bosdyn.client.estop import EstopClient
+from bosdyn.client.robot_state import RobotStateClient
 from bosdyn.client.robot_command import RobotCommandBuilder, RobotCommandClient, blocking_stand
 
-from dotenv import load_dotenv
+# Local imports
+from .estop_nogui import EstopNoGui
+
+## Environment variables
 load_dotenv()
 
 ROBOT_IP = os.getenv('ROBOT_IP')
@@ -22,8 +46,16 @@ BOSDYN_CLIENT_LOGGING_VERBOSE = os.getenv('BOSDYN_CLIENT_LOGGING_VERBOSE')
 BOSDYN_CLIENT_USERNAME = os.getenv('BOSDYN_CLIENT_USERNAME')
 BOSDYN_CLIENT_PASSWORD = os.getenv('BOSDYN_CLIENT_PASSWORD')
 
+
+# Main
 def hello_spot(robot, state_client):
-    """A simple example of using the Boston Dynamics API to command a Spot robot."""
+    """
+    A simple example of using the Boston Dynamics API to command a Spot robot.
+
+        Parameters:
+            robot (Robot): robot instance
+            state_client (Client): Client for the robot state
+    """
 
     # Establish time sync with the robot
     robot.time_sync.wait_for_sync()
@@ -80,11 +112,27 @@ def hello_spot(robot, state_client):
         robot.logger.info("Robot safely powered off.")
 
 def getSpotAuthentication():
+    """
+    Provide authentication to Spot
+
+        Returns:
+            BOSDYN_CLIENT_USERNAME (str): username
+            BOSDYN_CLIENT_PASSWORD (str): password
+    """
     ## TO DO
     ## IMPLEMENT AUTHENTICATION MECHANISM
     return BOSDYN_CLIENT_USERNAME, BOSDYN_CLIENT_PASSWORD
 
 def main():
+    """
+    Sets up the robot for executing HelloSpot
+
+        Returns:
+            (boolean): The function execution was successful (or not)
+        
+        Raises:
+            Exception: Hello, Spot! threw an exception
+    """
     # Setup logging
     bosdyn.client.util.setup_logging(BOSDYN_CLIENT_LOGGING_VERBOSE)
     

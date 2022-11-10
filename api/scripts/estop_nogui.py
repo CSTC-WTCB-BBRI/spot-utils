@@ -4,21 +4,28 @@
 # is subject to the terms and conditions of the Boston Dynamics Software
 # Development Kit License (20191101-BDSDK-SL).
 
-"""Provides a programmatic estop to stop the robot."""
-from __future__ import print_function
+# Some changes were made to only keep needed functionalities or add missing functionalities:
+#   * Removed unused imports
+#   * Removed unused functions and methods
+#   * Added comments for code sections
+#   * Added docstrings to functions
+# See https://github.com/boston-dynamics/spot-sdk/blob/master/python/examples/estop/estop_nogui.py for the original file
 
-import argparse
-import curses
-import logging
+#!/usr/bin/env python
+"""Provides a programmatic estop to stop the robot."""
+
+
+# Imports
 import os
-import signal
 import sys
 import time
 
+## Boston Dynamics
 import bosdyn.client.util
-from bosdyn.client.estop import EstopClient, EstopEndpoint, EstopKeepAlive
-from bosdyn.client.robot_state import RobotStateClient
+from bosdyn.client.estop import EstopEndpoint, EstopKeepAlive
 
+
+# Main
 class EstopNoGui():
     """Provides a software estop without a GUI.
 
@@ -27,6 +34,14 @@ class EstopNoGui():
     """
 
     def __init__(self, client, timeout_sec, name=None):
+        """
+        Construct a new EstopNoGui instance
+
+            Parameters:
+                client (Client): Client for the Estop endpoint
+                timeout_sec (int): Timeout of the new estop
+                name (str): Estop endpoint name
+        """
 
         # Force server to set up a single endpoint system
         ep = EstopEndpoint(client, name, timeout_sec)
@@ -38,18 +53,14 @@ class EstopNoGui():
         # Release the estop
         self.estop_keep_alive.allow()
 
-    def __enter__(self):
-        pass
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Cleanly shut down estop on exit."""
-        self.estop_keep_alive.end_periodic_check_in()
-
     def stop(self):
+        """
+        Disallow the use of the robot
+        """
         self.estop_keep_alive.stop()
 
     def allow(self):
+        """
+        Allow the use of the robot
+        """
         self.estop_keep_alive.allow()
-
-    def settle_then_cut(self):
-        self.estop_keep_alive.settle_then_cut()
