@@ -1,4 +1,4 @@
-from estop_nogui import EstopNoGui
+from .estop_nogui import EstopNoGui
 
 import bosdyn.client.util
 from bosdyn.client.estop import EstopClient, EstopEndpoint, EstopKeepAlive
@@ -7,6 +7,10 @@ from bosdyn.client.robot_state import RobotStateClient
 import argparse
 import os
 import sys
+import time
+
+import bosdyn.client.util
+from bosdyn.client.robot_command import RobotCommandBuilder, RobotCommandClient, blocking_stand
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -18,7 +22,7 @@ BOSDYN_CLIENT_LOGGING_VERBOSE = os.getenv('BOSDYN_CLIENT_LOGGING_VERBOSE')
 BOSDYN_CLIENT_USERNAME = os.getenv('BOSDYN_CLIENT_USERNAME')
 BOSDYN_CLIENT_PASSWORD = os.getenv('BOSDYN_CLIENT_PASSWORD')
 
-def hello_spot(robot):
+def hello_spot(robot, state_client):
     """A simple example of using the Boston Dynamics API to command a Spot robot."""
 
     # Establish time sync with the robot
@@ -36,6 +40,7 @@ def hello_spot(robot):
         robot.power_on(timeout_sec=20)
         assert robot.is_powered_on(), "Robot power on failed."
         robot.logger.info("Robot powered on.")
+        time.sleep(5)
 
         # Command the robot to stand up
         robot.logger.info("Commanding robot to stand...")
@@ -62,6 +67,13 @@ def hello_spot(robot):
         robot.operator_comment(log_comment)
         robot.logger.info('Added comment "%s" to robot log.', log_comment)
 
+        # Sit the robot down
+        robot.logger.info("Commanding robot to sit...")
+        cmd = RobotCommandBuilder.sit_command()
+        command_client.robot_command(cmd)
+        robot.logger.info("Robot ssitting.")
+        time.sleep(3)
+
         # Power the robot off
         robot.power_off(cut_immediately=False, timeout_sec=20)
         assert not robot.is_powered_on(), "Robot power off failed."
@@ -85,14 +97,14 @@ def main():
     estop_client = robot.ensure_client(EstopClient.default_service_name)
 
     # Create nogui estop
-    estop_nogui = EstopNoGui(estop_client, ROBOT_ESTOP_TIMEOUT_SEC, "Estop NoGUI")
+    estop_nogui = EstopNoGui(estop_client, int(ROBOT_ESTOP_TIMEOUT_SEC), "Estop NoGUI")
     estop_nogui.allow()
 
     # Create robot state client for the robot
     state_client = robot.ensure_client(RobotStateClient.default_service_name)
 
     try:
-        hello_spot(robot)
+        hello_spot(robot, state_client)
         estop_nogui.stop()
         return True
     except Exception as exc:  # pylint: disable=broad-except

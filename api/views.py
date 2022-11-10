@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 
+from .scripts.helloSpot import main
+
 # Create your views here.
 def getRoutes(request):
     routes = [
@@ -14,4 +16,5 @@ def getRoutes(request):
     return JsonResponse(routes, safe=False)
 
 def helloSpot(request):
+    main()
     return HttpResponse('Hello, Spot!')
