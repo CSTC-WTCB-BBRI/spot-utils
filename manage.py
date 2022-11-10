@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
+
+# Imports
 import os
 import sys
 
 
+# Main
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'spotUtils.settings')
