@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  spot_utils:
+    hostname: django
+    build: .
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./api:/usr/src/app/api
+      - ./web:/usr/src/app/web
+      - ./spotUtils:/usr/src/app/spot_utils
