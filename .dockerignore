@@ -1,0 +1,8 @@
+.git
+.github
+.tool-versions
+.gitignore
+.dockerignore
+Dockerfile
+LICENSE
+README.md
