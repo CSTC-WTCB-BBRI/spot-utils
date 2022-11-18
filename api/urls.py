@@ -15,6 +15,6 @@ from .views import ApiRoutes, HelloSpot
 * /api/hello-spot/  ->      Execute HelloSpot
 """
 urlpatterns = [
-    path('', ApiRoutes.as_view()),
-    path('hello-spot/', HelloSpot.as_view()),
+    path('', ApiRoutes.as_view(), name='api-routes'),
+    path('hello-spot/', HelloSpot.as_view(), name='api-hello-spot'),
 ]

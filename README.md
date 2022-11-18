@@ -165,3 +165,23 @@ First, run the server. Then, follow [this](http://127.0.0.1:8000) link (local de
 ```TEMPORARY SECTION```
 
 First, run the server. Then, follow [this](http://127.0.0.1:8000/api/) link (local dev server) or [this](http://127.0.0.1:80/api) link (dockerized dev server) to get all public api routes.
+
+## Tests
+
+All test files are located inside the /tests/ folder.
+
+<!-- ### Dependencies
+
+Some tests rely on [this](https://github.com/TheoPierne/spot-server-js) repository.
+
+cd to /api/scripts and clone it:
+```bash
+git clone https://github.com/TheoPierne/spot-server-js.git
+``` -->
+
+### Execute All Tests
+
+cd to the root of the project's directory and run:
+```bash
+python manage.py test tests
+```
