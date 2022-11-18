@@ -9,3 +9,4 @@ Pillow==6.1.0
 six
 pyqt5
 python-dotenv
+mock

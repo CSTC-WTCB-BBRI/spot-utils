@@ -16,7 +16,7 @@ from .views import Auth, Dashboard, Pointcloud
 * /pointcloud/  ->      Get the Pointcloud web page
 """
 urlpatterns = [
-    path('auth', Auth.as_view()),
-    path('', Dashboard.as_view()),
-    path('pointcloud', Pointcloud.as_view()),
+    path('auth', Auth.as_view(), name='web-auth'),
+    path('', Dashboard.as_view(), name='web-dashboard'),
+    path('pointcloud', Pointcloud.as_view(), name='web-pointcloud'),
 ]
