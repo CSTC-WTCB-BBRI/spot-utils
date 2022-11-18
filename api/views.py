@@ -6,10 +6,14 @@
 ## Django REST framework
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.http import StreamingHttpResponse
+from django.views.decorators import gzip
 
 # Local imports
-from .scripts.helloSpot import main
+from .scripts.helloSpot import main as helloSpot
+from .scripts.capture_laptop_frontcam_feed import gen, CaptureLaptop
 
+camera = None
 
 # Main
 class ApiRoutes(APIView):
@@ -38,5 +42,25 @@ class HelloSpot(APIView):
         """
         Execute HelloSpot
         """
-        main()
+        helloSpot()
         return Response('Hello, Spot!')
+
+
+@gzip.gzip_page
+def getCameraFeed(request):
+    """
+    API endpoint for the camera live video feed
+    """
+    global camera
+    try : 
+        camera = CaptureLaptop(0)
+        return StreamingHttpResponse(gen(camera), content_type="multipart/x-mixed-replace;boundary=frame")
+    except:
+        pass
+
+def closeCameraFeed(request):
+    """
+    API endpoint for closing the camera live video feed
+    """
+    global camera
+    camera.__del__()
