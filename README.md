@@ -170,14 +170,14 @@ First, run the server. Then, follow [this](http://127.0.0.1:8000/api/) link (loc
 
 All test files are located inside the /tests/ folder.
 
-### Dependencies
+<!-- ### Dependencies
 
 Some tests rely on [this](https://github.com/TheoPierne/spot-server-js) repository.
 
 cd to /api/scripts and clone it:
 ```bash
 git clone https://github.com/TheoPierne/spot-server-js.git
-```
+``` -->
 
 ### Execute All Tests
 

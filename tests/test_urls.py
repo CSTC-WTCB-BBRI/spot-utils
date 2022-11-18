@@ -15,13 +15,14 @@ import api.scripts.helloSpot
 # Main
 class WebUrlsTestCase(TestCase):
     """
-    Test case for the Django web app urls.
+    Test cases for the Django web app urls.
     """
     client = None
 
     def setUp(self):
         """
         This method is ran before each test case in this class.
+            Initialisation of a new Client instance.
         """
         client = Client()
     
@@ -54,13 +55,14 @@ class WebUrlsTestCase(TestCase):
 
 class ApiUrlsTestCase(TestCase):
     """
-    Test case for the Django api app urls.
+    Test cases for the Django api app urls.
     """
     client = None
 
     def setUp(self):
         """
         This method is ran before each test case in this class.
+            Initialisation of a new Client instance.
         """
         client = Client()
 
