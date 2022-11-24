@@ -24,12 +24,13 @@ _LOGGER = logging.getLogger(__name__)
 # Main
 class WebCam(CameraInterface):
     """Provide access to the latest web cam data using openCV's VideoCapture."""
-    def __init__(self, device_name):
+    def __init__(self, device_name, default_jpeg_quality=75):
         """
         Construct a new WebCam instance
 
             Parameters:
                 device_name (str): camera device name (integer-convertible)
+                default_jpeg_quality (int): default jpeg image quality
         """
         self.device_name = int(device_name)
         self.capture = cv2.VideoCapture(self.device_name)
@@ -47,6 +48,10 @@ class WebCam(CameraInterface):
             self.camera_exposure = self.capture.get(cv2.CAP_PROP_EXPOSURE)
         except cv2.error as e:
             _LOGGER.warning("Unable to determine camera exposure time: %s", e)
+        self.rows = int(self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.cols = int(self.capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+
+        self.default_jpeg_quality = default_jpeg_quality
     
     def blocking_capture(self):
         pass

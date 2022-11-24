@@ -17,8 +17,10 @@ class WebCamTestCase(TestCase):
     Test cases for the WebCam Camera Interface.
     """
     # Constants
-    mocked_camera_gain = 255
-    mocked_camera_exposure = 255
+    mocked_camera_gain = 10
+    mocked_camera_exposure = 150
+    mocked_camera_rows = 200
+    mocked_camera_cols = 100
 
     def setUp(self):
         """
@@ -47,23 +49,22 @@ class WebCamTestCase(TestCase):
                 return WebCamTestCase.mocked_camera_gain
             case cv2.CAP_PROP_EXPOSURE:
                 return WebCamTestCase.mocked_camera_exposure
+            case cv2.CAP_PROP_FRAME_HEIGHT:
+                return WebCamTestCase.mocked_camera_rows
+            case cv2.CAP_PROP_FRAME_WIDTH:
+                return WebCamTestCase.mocked_camera_cols
             case other:
                 return 0
 
     @mock.patch('cv2.VideoCapture.get', mocked_capture_get)
-    def test_get_gain_from_known_device(self):
+    def test_get_capture_constants_from_known_device(self):
         """
-        Test case for checking the device camera gain is saved in instance variable camera_gain.
+        Test case for checking the device camera gain and exposure are saved in instance variables.
+            Also test that the image dimensions are saved in instance variables.
         """
         self.device_name = '0'
         webCam = WebCam(self.device_name)
         self.assertEqual(webCam.camera_gain, self.mocked_camera_gain)
-
-    @mock.patch('cv2.VideoCapture.get', mocked_capture_get)
-    def test_get_exposure_from_known_device(self):
-        """
-        Test case for checking the device camera exposure is saved in instance variable camera_exposure.
-        """
-        self.device_name = '0'
-        webCam = WebCam(self.device_name)
         self.assertEqual(webCam.camera_exposure, self.mocked_camera_exposure)
+        self.assertEqual(webCam.rows, self.mocked_camera_rows)
+        self.assertEqual(webCam.cols, self.mocked_camera_cols)
