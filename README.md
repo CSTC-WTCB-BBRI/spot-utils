@@ -17,11 +17,13 @@ Create the .env file and paste the following inside it (values are placeholders)
 ```bash
 BOSDYN_CLIENT_USERNAME=user 
 BOSDYN_CLIENT_PASSWORD=password
-CLIENT_NAME=client
 ROBOT_IP=192.168.80.3
 SELF_IP=192.168.80.100
 ROBOT_ESTOP_TIMEOUT_SEC=5
 BOSDYN_CLIENT_LOGGING_VERBOSE=True
+WEBCAM_PORT=5000
+GUID=GUID
+SECRET=SECRET
 ```
 
 ### Development Payload
@@ -150,11 +152,13 @@ Create the .env file and paste the following inside it (values are placeholders)
 ```bash
 BOSDYN_CLIENT_USERNAME=user 
 BOSDYN_CLIENT_PASSWORD=password
-CLIENT_NAME=client
 ROBOT_IP=192.168.80.3
 SELF_IP=192.168.80.100
 ROBOT_ESTOP_TIMEOUT_SEC=5
 BOSDYN_CLIENT_LOGGING_VERBOSE=True
+WEBCAM_PORT=5000
+GUID=GUID
+SECRET=SECRET
 ```
 
 ### Development Payload
@@ -163,7 +167,7 @@ This project's python scripts use payload credentials registered with the robot 
 
 Follow [this](https://dev.bostondynamics.com/docs/python/daq_tutorial/daq1) to learn how to setup a new payload on Spot.
 
-Save the CRED_FILE to the root of this project's repository.
+Save the GUID and SECRET to the .env file you created at the previous step.
 
 **NOTE: At [BuildWise](https://www.buildwise.be/en/), there already is a "Dev Payload" payload registered on Spot. Ask for the CRED_FILE**
 

@@ -13,15 +13,40 @@
 import logging
 import cv2
 import time
+import os
+import argparse
+import types
+
+from dotenv import load_dotenv
 
 # Boston Dynamics
+import bosdyn.util
+from bosdyn.client.directory_registration import (DirectoryRegistrationClient,
+                                                 DirectoryRegistrationKeepAlive)
+from bosdyn.client.util import setup_logging
+from bosdyn.client.server_util import GrpcServiceRunner
 from bosdyn.client.image_service_helpers import CameraInterface, convert_RGB_to_grayscale, VisualImageSource, CameraBaseImageServicer
-from bosdyn.api import image_pb2
+from bosdyn.api import image_pb2, image_service_pb2_grpc
 
 # Local Imports
 
+## Environment variables
+load_dotenv('.env')
+
+WEBCAM_PORT = os.getenv('WEBCAM_PORT')
+GUID = os.getenv('GUID')
+SECRET = os.getenv('SECRET')
+ROBOT_IP = os.getenv('ROBOT_IP')
+SELF_IP = os.getenv('SELF_IP')
+
 # Variables
 _LOGGER = logging.getLogger(__name__)
+
+DIRECTORY_NAME = 'web-cam-service'
+AUTHORITY = 'robot-web-cam'
+SERVICE_TYPE = 'bosdyn.api.ImageService'
+
+CLIENT_NAME = "SpotCamerasSDK"
 
 # Main
 class WebCam(CameraInterface):
@@ -104,14 +129,66 @@ class WebCam(CameraInterface):
             raise Exception(
                 "Image format %s is unsupported." % image_pb2.Image.Format.Name(image_format))
         
-    def make_webcam_image_service(bosdyn_sdk_robot, service_name, device_names, logger=None):
-        image_sources = []
-        for device in device_names:
-            web_cam = WebCam(device)
-            img_src = VisualImageSource(web_cam.image_source_name, web_cam, rows=web_cam.rows,
-                                        cols=web_cam.cols, gain=web_cam.camera_gain,
-                                        exposure=web_cam.camera_exposure,
-                                        pixel_formats=[image_pb2.Image.PIXEL_FORMAT_GREYSCALE_U8,
-                                                    image_pb2.Image.PIXEL_FORMAT_RGB_U8])
-            image_sources.append(img_src)
-            return CameraBaseImageServicer(bosdyn_sdk_robot, service_name, image_sources, logger)
+def make_webcam_image_service(bosdyn_sdk_robot, service_name, device_names, logger=None):
+    image_sources = []
+    for device in device_names:
+        web_cam = WebCam(device)
+        img_src = VisualImageSource(web_cam.image_source_name, web_cam, rows=web_cam.rows,
+                                    cols=web_cam.cols, gain=web_cam.camera_gain,
+                                    exposure=web_cam.camera_exposure,
+                                    pixel_formats=[image_pb2.Image.PIXEL_FORMAT_GREYSCALE_U8,
+                                                image_pb2.Image.PIXEL_FORMAT_RGB_U8])
+        image_sources.append(img_src)
+        return CameraBaseImageServicer(bosdyn_sdk_robot, service_name, image_sources, logger)
+
+def run_service(bosdyn_sdk_robot, port, service_name, device_names, logger=None):
+    add_servicer_to_server_fn = image_service_pb2_grpc.add_ImageServiceServicer_to_server
+    service_servicer = make_webcam_image_service(bosdyn_sdk_robot, service_name, device_names,
+                                                logger=logger)
+    return GrpcServiceRunner(service_servicer, add_servicer_to_server_fn, port, logger=logger)
+
+def add_web_cam_arguments(parser):
+    parser.add_argument(
+        '--device-name',
+        help=('Image source to query. If none are passed, it will default to the first available '
+            'source.'), nargs='*', default=['0'])
+
+def main():
+    """
+    Sets up the robot for running the SpotCameras image service.
+    """
+    # Options
+    options = types.SimpleNamespace()
+    devices = ["0"]
+
+    # Variables
+    options.hostname = ROBOT_IP
+    options.verbose = False
+    options.guid = GUID
+    options.secret = SECRET
+    options.port = WEBCAM_PORT
+    options.host_ip = SELF_IP
+    
+    # Setup logging
+    setup_logging(options.verbose, include_dedup_filter=True)
+
+    # Create robot object
+    sdk = bosdyn.client.create_standard_sdk(CLIENT_NAME)
+    robot = sdk.create_robot(options.hostname)
+
+    # Authentication
+    robot.authenticate_from_payload_credentials(options.guid, options.secret)
+
+    # Run the service
+    service_runner = run_service(robot, options.port, DIRECTORY_NAME, devices, logger=_LOGGER)
+
+    # Register the service
+    dir_reg_client = robot.ensure_client(DirectoryRegistrationClient.default_service_name)
+    keep_alive = DirectoryRegistrationKeepAlive(dir_reg_client, logger=_LOGGER)
+    keep_alive.start(DIRECTORY_NAME, SERVICE_TYPE, AUTHORITY, options.host_ip, service_runner.port)
+
+    with keep_alive:
+        service_runner.run_until_interrupt()
+
+if __name__ == '__main__':
+    main()

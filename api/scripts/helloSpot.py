@@ -37,14 +37,16 @@ from bosdyn.client.robot_command import RobotCommandBuilder, RobotCommandClient,
 from .estop_nogui import EstopNoGui
 
 ## Environment variables
-load_dotenv()
+load_dotenv('.env')
 
 ROBOT_IP = os.getenv('ROBOT_IP')
-CLIENT_NAME = os.getenv('CLIENT_NAME')
 ROBOT_ESTOP_TIMEOUT_SEC = os.getenv('ROBOT_ESTOP_TIMEOUT_SEC')
 BOSDYN_CLIENT_LOGGING_VERBOSE = os.getenv('BOSDYN_CLIENT_LOGGING_VERBOSE')
 BOSDYN_CLIENT_USERNAME = os.getenv('BOSDYN_CLIENT_USERNAME')
 BOSDYN_CLIENT_PASSWORD = os.getenv('BOSDYN_CLIENT_PASSWORD')
+
+# Variables
+CLIENT_NAME = "HelloSpotSDK"
 
 
 # Main

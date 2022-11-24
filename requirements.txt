@@ -10,3 +10,4 @@ six
 pyqt5
 python-dotenv
 mock
+opencv-python

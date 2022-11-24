@@ -17,7 +17,7 @@ from bosdyn.api import image_pb2
 from bosdyn.client.image import build_image_request
 
 # Local Imports
-from api.scripts.spotCameras import WebCam
+from api.scripts.spotCameras import WebCam, make_webcam_image_service
 
 # Main
 class WebCamTestCase(TestCase):
@@ -32,12 +32,13 @@ class WebCamTestCase(TestCase):
     SERVICE_NAME = 'SpotCameras'
     CLIENT_NAME = 'Test Spot'
     ROBOT_IP="0.0.0.0"
+    WEBCAM_PORT=5000
 
     def setUp(self):
         """
         This method is ran before each test case in this class.
         """
-        self.device_name = ''
+        self.device_name = '0'
     
     def test_device_name_not_integer_raises_value_error_exception(self):
         """
@@ -55,17 +56,16 @@ class WebCamTestCase(TestCase):
         self.assertRaises(Exception, WebCam, self.device_name)
     
     def mocked_capture_get(self, propId):
-        match propId:
-            case cv2.CAP_PROP_GAIN:
-                return WebCamTestCase.MOCKED_CAMERA_GAIN
-            case cv2.CAP_PROP_EXPOSURE:
-                return WebCamTestCase.MOCKED_CAMERA_EXPOSURE
-            case cv2.CAP_PROP_FRAME_HEIGHT:
-                return WebCamTestCase.MOCKED_CAMERA_ROWS
-            case cv2.CAP_PROP_FRAME_WIDTH:
-                return WebCamTestCase.MOCKED_CAMERA_COLS
-            case other:
-                return 0
+        if propId == cv2.CAP_PROP_GAIN:
+            return WebCamTestCase.MOCKED_CAMERA_GAIN
+        elif propId == cv2.CAP_PROP_EXPOSURE:
+            return WebCamTestCase.MOCKED_CAMERA_EXPOSURE
+        elif propId == cv2.CAP_PROP_FRAME_HEIGHT:
+            return WebCamTestCase.MOCKED_CAMERA_ROWS
+        elif propId == cv2.CAP_PROP_FRAME_WIDTH:
+            return WebCamTestCase.MOCKED_CAMERA_COLS
+        else:
+            return 0
 
     @mock.patch('cv2.VideoCapture.get', mocked_capture_get)
     def test_get_capture_constants_from_known_device(self):
@@ -73,7 +73,6 @@ class WebCamTestCase(TestCase):
         Test case for checking the device camera gain and exposure are saved in instance variables.
             Also test that the image dimensions are saved in instance variables.
         """
-        self.device_name = '0'
         webCam = WebCam(self.device_name)
         self.assertEqual(webCam.camera_gain, self.MOCKED_CAMERA_GAIN)
         self.assertEqual(webCam.camera_exposure, self.MOCKED_CAMERA_EXPOSURE)
@@ -93,7 +92,6 @@ class WebCamTestCase(TestCase):
         """
         Test case for checking that an unsuccesful capture raises an exception.
         """
-        self.device_name = '0'
         webCam = WebCam(self.device_name)
         self.assertRaises(Exception, webCam.blocking_capture)
 
@@ -102,7 +100,6 @@ class WebCamTestCase(TestCase):
         """
         Test case for checking that a succesful capture returns a jpeg image.
         """
-        self.device_name = '0'
         webCam = WebCam(self.device_name)
         image, capture_time = webCam.blocking_capture()
         self.assertEqual(image.format, 'JPEG')
@@ -111,7 +108,6 @@ class WebCamTestCase(TestCase):
     #     """
     #     Test case for checking that the decoded image's format.
     #     """
-    #     self.device_name = '0'
     #     webCam = WebCam(self.device_name)
     #     image, capture_time = webCam.blocking_capture()
     #     image_proto = image_pb2.Image()
@@ -129,14 +125,27 @@ class WebCamTestCase(TestCase):
         """
         Test case for checking the service servicer creation.
         """
-        self.device_name = '0'
         device_names = [self.device_name]
         sdk = bosdyn.client.create_standard_sdk(self.CLIENT_NAME)
         robot = sdk.create_robot(self.ROBOT_IP)
-        service_servicer = WebCam.make_webcam_image_service(robot, self.SERVICE_NAME, device_names)
+        service_servicer = make_webcam_image_service(robot, self.SERVICE_NAME, device_names)
         deviceIdxO_params = service_servicer.image_sources[0].get_image_capture_params()
         self.assertEqual(service_servicer.service_name, self.SERVICE_NAME)
         self.assertEqual(service_servicer.image_sources[0].image_source_proto.rows, self.MOCKED_CAMERA_ROWS)
         self.assertEqual(service_servicer.image_sources[0].image_source_proto.cols, self.MOCKED_CAMERA_COLS)
         self.assertEqual(deviceIdxO_params.gain, self.MOCKED_CAMERA_GAIN)
         self.assertEqual(deviceIdxO_params.exposure_duration.seconds, self.MOCKED_CAMERA_EXPOSURE)
+
+    # @mock.patch('bosdyn.client.image_service_helpers.CameraBaseImageServicer.__init__', mocked_camera_base_image_servicer_constructor)
+    # def mocked_make_webcam_image_service(self, bosdyn_sdk_robot, service_name, device_names, logger=None):
+    #     return CameraBaseImageServicer(bosdyn_sdk_robot, service_name, image_sources, logger)
+    
+    # @mock.patch('api.scripts.spotCameras.WebCam.make_webcam_image_service', mocked_make_webcam_image_service)
+    # def test_run_service(self):
+    #     """
+    #     Test case for running the image service.
+    #     """
+    #     device_names = [self.device_name]
+    #     sdk = bosdyn.client.create_standard_sdk(self.CLIENT_NAME)
+    #     robot = sdk.create_robot(self.ROBOT_IP)
+    #     WebCam.run_service(robot, self.WEBCAM_PORT, self.SERVICE_NAME, device_names)
