@@ -18,7 +18,7 @@ from bosdyn.client.image_service_helpers import CameraInterface
 
 # Local Imports
 
-# Variable
+# Variables
 _LOGGER = logging.getLogger(__name__)
 
 # Main
@@ -37,6 +37,16 @@ class WebCam(CameraInterface):
             err = "Unable to open a cv2.VideoCapture connection to %s" % self.device_name
             _LOGGER.warning(err)
             raise Exception(err)
+
+        self.camera_exposure, self.camera_gain = None, None
+        try:
+            self.camera_gain = self.capture.get(cv2.CAP_PROP_GAIN)
+        except cv2.error as e:
+            _LOGGER.warning("Unable to determine camera gain: %s", e)
+        try:
+            self.camera_exposure = self.capture.get(cv2.CAP_PROP_EXPOSURE)
+        except cv2.error as e:
+            _LOGGER.warning("Unable to determine camera exposure time: %s", e)
     
     def blocking_capture(self):
         pass
