@@ -3,6 +3,7 @@
 
 # Imports
 import mock
+import cv2
 
 ## Django
 from django.test import TestCase
@@ -15,13 +16,15 @@ class WebCamTestCase(TestCase):
     """
     Test cases for the WebCam Camera Interface.
     """
-    device_name = ''
+    # Constants
+    mocked_camera_gain = 255
+    mocked_camera_exposure = 255
 
     def setUp(self):
         """
         This method is ran before each test case in this class.
         """
-        pass
+        self.device_name = ''
     
     def test_device_name_not_integer_raises_value_error_exception(self):
         """
@@ -37,3 +40,30 @@ class WebCamTestCase(TestCase):
         """
         self.device_name = '666'
         self.assertRaises(Exception, WebCam, self.device_name)
+    
+    def mocked_capture_get(self, propId):
+        match propId:
+            case cv2.CAP_PROP_GAIN:
+                return WebCamTestCase.mocked_camera_gain
+            case cv2.CAP_PROP_EXPOSURE:
+                return WebCamTestCase.mocked_camera_exposure
+            case other:
+                return 0
+
+    @mock.patch('cv2.VideoCapture.get', mocked_capture_get)
+    def test_get_gain_from_known_device(self):
+        """
+        Test case for checking the device camera gain is saved in instance variable camera_gain.
+        """
+        self.device_name = '0'
+        webCam = WebCam(self.device_name)
+        self.assertEqual(webCam.camera_gain, self.mocked_camera_gain)
+
+    @mock.patch('cv2.VideoCapture.get', mocked_capture_get)
+    def test_get_exposure_from_known_device(self):
+        """
+        Test case for checking the device camera exposure is saved in instance variable camera_exposure.
+        """
+        self.device_name = '0'
+        webCam = WebCam(self.device_name)
+        self.assertEqual(webCam.camera_exposure, self.mocked_camera_exposure)

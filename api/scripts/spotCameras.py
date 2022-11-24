@@ -31,10 +31,10 @@ class WebCam(CameraInterface):
             Parameters:
                 device_name (str): camera device name (integer-convertible)
         """
-        device_name = int(device_name)
-        self.capture = cv2.VideoCapture(device_name)
+        self.device_name = int(device_name)
+        self.capture = cv2.VideoCapture(self.device_name)
         if not self.capture.isOpened():
-            err = "Unable to open a cv2.VideoCapture connection to %s" % device_name
+            err = "Unable to open a cv2.VideoCapture connection to %s" % self.device_name
             _LOGGER.warning(err)
             raise Exception(err)
     
