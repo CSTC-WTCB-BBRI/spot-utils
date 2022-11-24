@@ -11,6 +11,10 @@ from PIL import Image
 ## Django
 from django.test import TestCase
 
+## Boston Dynamics
+from bosdyn.api import image_pb2
+from bosdyn.client.image import build_image_request
+
 # Local Imports
 from api.scripts.spotCameras import WebCam
 
@@ -98,3 +102,14 @@ class WebCamTestCase(TestCase):
         webCam = WebCam(self.device_name)
         image, capture_time = webCam.blocking_capture()
         self.assertEqual(image.format, 'JPEG')
+    
+    # def test_decoded_image_format(self):
+    #     """
+    #     Test case for checking that the decoded image's format.
+    #     """
+    #     self.device_name = '0'
+    #     webCam = WebCam(self.device_name)
+    #     image, capture_time = webCam.blocking_capture()
+    #     image_proto = image_pb2.Image()
+    #     image_req = build_image_request('test', webCam.default_jpeg_quality, image_pb2.Image.FORMAT_JPEG, image_pb2.Image.PIXEL_FORMAT_GREYSCALE_U8, None)
+    #     webCam.image_decode(image, image_proto, image_req)
