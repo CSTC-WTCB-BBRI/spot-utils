@@ -4,6 +4,9 @@
 # Imports
 import mock
 import cv2
+import imghdr
+from io import BytesIO
+from PIL import Image
 
 ## Django
 from django.test import TestCase
@@ -68,3 +71,30 @@ class WebCamTestCase(TestCase):
         self.assertEqual(webCam.camera_exposure, self.mocked_camera_exposure)
         self.assertEqual(webCam.rows, self.mocked_camera_rows)
         self.assertEqual(webCam.cols, self.mocked_camera_cols)
+    
+    def mocked_capture_read_unsuccesful(self):
+        image = Image.open("tests/src/test.jpeg")
+        return False, image
+    
+    def mocked_capture_read_succesful(self):
+        image = Image.open("tests/src/test.jpeg")
+        return True, image
+
+    @mock.patch('cv2.VideoCapture.read', mocked_capture_read_unsuccesful)
+    def test_blocking_capture_raises_exception_when_unsuccesful(self):
+        """
+        Test case for checking that an unsuccesful capture raises an exception.
+        """
+        self.device_name = '0'
+        webCam = WebCam(self.device_name)
+        self.assertRaises(Exception, webCam.blocking_capture)
+
+    @mock.patch('cv2.VideoCapture.read', mocked_capture_read_succesful)
+    def test_blocking_capture_returns_jpeg_image(self):
+        """
+        Test case for checking that a succesful capture returns a jpeg image.
+        """
+        self.device_name = '0'
+        webCam = WebCam(self.device_name)
+        image, capture_time = webCam.blocking_capture()
+        self.assertEqual(img.format, 'JPEG')
