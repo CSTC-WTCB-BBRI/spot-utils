@@ -97,4 +97,4 @@ class WebCamTestCase(TestCase):
         self.device_name = '0'
         webCam = WebCam(self.device_name)
         image, capture_time = webCam.blocking_capture()
-        self.assertEqual(img.format, 'JPEG')
+        self.assertEqual(image.format, 'JPEG')

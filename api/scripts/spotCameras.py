@@ -12,6 +12,7 @@
 # Imports
 import logging
 import cv2
+import time
 
 # Boston Dynamics
 from bosdyn.client.image_service_helpers import CameraInterface
@@ -54,7 +55,12 @@ class WebCam(CameraInterface):
         self.default_jpeg_quality = default_jpeg_quality
     
     def blocking_capture(self):
-        pass
+        capture_time = time.time()
+        success, image = self.capture.read()
+        if success:
+            return image, capture_time
+        else:
+            raise Exception("Unsuccessful call to cv2.VideoCapture().read()")
     
     def image_decode(self, image_data, image_proto, image_req):
         pass
