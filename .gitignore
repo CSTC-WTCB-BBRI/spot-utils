@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# https://github.com/TheoPierne/spot-server-js
-spot-server-js
+# Payload Credentials File
+spot_dev_creds.txt
