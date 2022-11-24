@@ -15,7 +15,7 @@ import cv2
 import time
 
 # Boston Dynamics
-from bosdyn.client.image_service_helpers import CameraInterface, convert_RGB_to_grayscale
+from bosdyn.client.image_service_helpers import CameraInterface, convert_RGB_to_grayscale, VisualImageSource, CameraBaseImageServicer
 from bosdyn.api import image_pb2
 
 # Local Imports
@@ -103,3 +103,15 @@ class WebCam(CameraInterface):
         else:
             raise Exception(
                 "Image format %s is unsupported." % image_pb2.Image.Format.Name(image_format))
+        
+    def make_webcam_image_service(bosdyn_sdk_robot, service_name, device_names, logger=None):
+        image_sources = []
+        for device in device_names:
+            web_cam = WebCam(device)
+            img_src = VisualImageSource(web_cam.image_source_name, web_cam, rows=web_cam.rows,
+                                        cols=web_cam.cols, gain=web_cam.camera_gain,
+                                        exposure=web_cam.camera_exposure,
+                                        pixel_formats=[image_pb2.Image.PIXEL_FORMAT_GREYSCALE_U8,
+                                                    image_pb2.Image.PIXEL_FORMAT_RGB_U8])
+            image_sources.append(img_src)
+            return CameraBaseImageServicer(bosdyn_sdk_robot, service_name, image_sources, logger)
