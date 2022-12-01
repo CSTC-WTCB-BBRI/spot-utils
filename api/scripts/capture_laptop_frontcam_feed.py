@@ -2,34 +2,8 @@ import numpy as np
 import cv2 as cv
 import threading
 
-#########################
-
-# TO DO
-# REMOVE USELESS IMPORTS
-
-#########################
-
-import argparse
-import sys
-import os
-
-import cv2
-import numpy as np
-from scipy import ndimage
-
 import bosdyn.client
-import bosdyn.client.util
 from bosdyn.api import image_pb2
-from bosdyn.client.image import ImageClient, build_image_request
-
-## Environment variables
-from dotenv import load_dotenv
-
-load_dotenv('.env')
-
-GUID = os.getenv('GUID')
-SECRET = os.getenv('SECRET')
-ROBOT_IP = os.getenv('ROBOT_IP')
 
 class CaptureLaptop(object):
 
@@ -46,7 +20,7 @@ class CaptureLaptop(object):
     def getImage(self):
         image_responses = self.image_client.get_image_from_sources(['frontleft_fisheye_image'])
         image = image_responses[0]
-        num_bytes = 1  # Assume a default of 1 byte encodings.
+        num_bytes = 1
         if image.shot.image.pixel_format == image_pb2.Image.PIXEL_FORMAT_DEPTH_U16:
             dtype = np.uint16
             extension = ".png"
@@ -67,9 +41,9 @@ class CaptureLaptop(object):
             try:
                 img = img.reshape((image.shot.image.rows, image.shot.image.cols, num_bytes))
             except ValueError:
-                img = cv2.imdecode(img, -1)
+                img = cv.imdecode(img, -1)
         else:
-            img = cv2.imdecode(img, -1)
+            img = cv.imdecode(img, -1)
         self.frame = img
 
 

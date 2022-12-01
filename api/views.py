@@ -8,7 +8,7 @@ import os
 ## Django REST framework
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, HttpResponse
 from django.views.decorators import gzip
 
 ## Bosdyn
@@ -85,4 +85,6 @@ def closeCameraFeed(request):
     API endpoint for closing the camera live video feed
     """
     global camera
-    camera.__del__()
+    if camera is not None:
+        camera.__del__()
+    return HttpResponse()
