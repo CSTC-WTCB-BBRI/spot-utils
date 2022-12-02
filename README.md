@@ -121,6 +121,8 @@ pip install -r requirements.txt
 |   pyqt5  |   [Qt is set of cross-platform C++ libraries that implement high-level APIs for accessing many aspects of modern desktop and mobile systems](https://pypi.org/project/PyQt5/)    |
 |   python-dotenv  |   [Python-dotenv reads key-value pairs from a .env file and can set them as environment variables](https://pypi.org/project/python-dotenv/)    |
 |   mock    |   [mock is a library for testing in Python](https://pypi.org/project/mock/)  |
+|   numpy   |   [NumPy is the fundamental package for array computing with Python](https://pypi.org/project/numpy/)    |
+|   scipy   |   [SciPy (pronounced “Sigh Pie”) is an open-source software for mathematics, science, and engineering](https://pypi.org/project/scipy/)   |
 
 ### Set Up Database
 

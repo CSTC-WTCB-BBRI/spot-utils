@@ -10,3 +10,5 @@ six
 pyqt5
 python-dotenv
 mock
+numpy
+scipy
