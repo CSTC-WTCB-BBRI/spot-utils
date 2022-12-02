@@ -103,7 +103,7 @@ def hello_spot(robot, state_client):
         robot.logger.info("Commanding robot to sit...")
         cmd = RobotCommandBuilder.sit_command()
         command_client.robot_command(cmd)
-        robot.logger.info("Robot ssitting.")
+        robot.logger.info("Robot sitting.")
         time.sleep(3)
 
         # Power the robot off
