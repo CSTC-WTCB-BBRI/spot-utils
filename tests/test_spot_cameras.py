@@ -56,7 +56,7 @@ class SpotCamerasTestCase(TestCase):
         self.assertEqual(self.spotCameras.cameras, self.cameras)
         self.assertEqual(self.spotCameras.frame, None)
         self.assertTrue(isinstance(self.spotCameras.image_client, ImageClient))
-    
+
     def mocked_imdecode(buf, flags):
         img = cv.imread("./tests/test.jpg")
         return img
