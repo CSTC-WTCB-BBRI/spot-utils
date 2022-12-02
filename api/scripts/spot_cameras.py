@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import ndimage
 import cv2 as cv
+import threading
 
 import bosdyn.client
 from bosdyn.api import image_pb2
@@ -14,7 +15,6 @@ ROTATION_ANGLE = {
 }
 
 class SpotCameras(object):
-
     def __init__(self, camera_index, image_client):
         self.cameras = {
             'back_fisheye_image': 'back_fisheye_image',
@@ -26,6 +26,11 @@ class SpotCameras(object):
         self.frame = None
         self.image_client = image_client
         self.getImage()
+        self.updating = True
+        threading.Thread(target=self.update, args=()).start()
+    
+    def __del__(self):
+        self.updating = False
     
     def getImage(self):
         image_responses = self.image_client.get_image_from_sources([self.cameras['frontleft_fisheye_image']])
@@ -63,3 +68,16 @@ class SpotCameras(object):
             return jpeg.tobytes()
         except:
             return False
+    
+    def update(self):
+        while self.updating:
+            self.getImage()
+
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        if (not frame):
+            camera.__del__()
+            break
+        yield(b'--frame\r\n'
+              b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')

@@ -33,6 +33,12 @@ class SpotCamerasTestCase(TestCase):
     def mocked_get_image(self):
         pass
     
+    def mocked_get_image_from_sources(self, image_sources, **kwargs):
+        img = ImageResponse()
+        img.source.name = 'left_fisheye_image'
+        return [img]
+    
+    @mock.patch('bosdyn.client.image.ImageClient.get_image_from_sources', mocked_get_image_from_sources)
     @mock.patch('api.scripts.spot_cameras.SpotCameras.getImage', mocked_get_image)
     def setUp(self):
         """
@@ -50,12 +56,7 @@ class SpotCamerasTestCase(TestCase):
         self.assertEqual(self.spotCameras.cameras, self.cameras)
         self.assertEqual(self.spotCameras.frame, None)
         self.assertTrue(isinstance(self.spotCameras.image_client, ImageClient))
-    
-    def mocked_get_image_from_sources(self, image_sources, **kwargs):
-        img = ImageResponse()
-        img.source.name = 'left_fisheye_image'
-        return [img]
-    
+
     def mocked_imdecode(buf, flags):
         img = cv.imread("./tests/test.jpg")
         return img
