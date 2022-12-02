@@ -50,9 +50,6 @@ class EstopNoGui():
         # Begin periodic check-in between keep-alive and robot
         self.estop_keep_alive = EstopKeepAlive(ep)
 
-        # Release the estop
-        self.estop_keep_alive.allow()
-
     def stop(self):
         """
         Disallow the use of the robot

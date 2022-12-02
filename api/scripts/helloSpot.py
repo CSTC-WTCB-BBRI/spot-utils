@@ -30,19 +30,21 @@ from dotenv import load_dotenv
 ## Boston Dynamics
 import bosdyn.client.util
 from bosdyn.client.estop import EstopClient
+from bosdyn.client.lease import LeaseClient
 from bosdyn.client.robot_state import RobotStateClient
 from bosdyn.client.robot_command import RobotCommandBuilder, RobotCommandClient, blocking_stand
 
 # Local imports
 from .estop_nogui import EstopNoGui
+from manage import ROOT_DIR
 
 ## Environment variables
-load_dotenv()
+load_dotenv(f"{ROOT_DIR}.env")
 
 ROBOT_IP = os.getenv('ROBOT_IP')
 CLIENT_NAME = os.getenv('CLIENT_NAME')
 ROBOT_ESTOP_TIMEOUT_SEC = os.getenv('ROBOT_ESTOP_TIMEOUT_SEC')
-BOSDYN_CLIENT_LOGGING_VERBOSE = os.getenv('BOSDYN_CLIENT_LOGGING_VERBOSE')
+BOSDYN_CLIENT_LOGGING_VERBOSE = eval(os.getenv('BOSDYN_CLIENT_LOGGING_VERBOSE'))
 BOSDYN_CLIENT_USERNAME = os.getenv('BOSDYN_CLIENT_USERNAME')
 BOSDYN_CLIENT_PASSWORD = os.getenv('BOSDYN_CLIENT_PASSWORD')
 
@@ -103,7 +105,7 @@ def hello_spot(robot, state_client):
         robot.logger.info("Commanding robot to sit...")
         cmd = RobotCommandBuilder.sit_command()
         command_client.robot_command(cmd)
-        robot.logger.info("Robot ssitting.")
+        robot.logger.info("Robot sitting.")
         time.sleep(3)
 
         # Power the robot off
@@ -157,6 +159,7 @@ def main():
         return True
     except Exception as exc:  # pylint: disable=broad-except
         logger = bosdyn.client.util.get_logger()
+        print(exc)
         logger.error("Hello, Spot! threw an exception: %r", exc)
         estop_nogui.stop()
         return False
