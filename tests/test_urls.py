@@ -9,8 +9,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework.response import Response
 
-# Local imports
-import api.scripts.helloSpot
 
 # Main
 class WebUrlsTestCase(TestCase):
