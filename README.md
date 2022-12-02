@@ -10,17 +10,32 @@ If running on a docker container, see the [Getting Started (Docker)](##getting-s
 
 ### Environment Variables
 
-This project's python scripts use environment variables. These are stored within a ```/api/scripts/.env```.
+This project's python scripts use environment variables. These are stored within the ```.env``` file at the root of this project's directory.
 
 Create the .env file and paste the following inside it (values are placeholders):
 
 ```bash
-BOSDYN_CLIENT_USERNAME=user 
+BOSDYN_CLIENT_ADMIN_USERNAME=admin_user 
+BOSDYN_CLIENT_ADMIN_PASSWORD=admin_password
+BOSDYN_CLIENT_USERNAME=user
 BOSDYN_CLIENT_PASSWORD=password
 ROBOT_IP=192.168.80.3
+SELF_IP=192.168.80.100
 ROBOT_ESTOP_TIMEOUT_SEC=5
 BOSDYN_CLIENT_LOGGING_VERBOSE=True
+GUID=GUID
+SECRET=SECRET
 ```
+
+### Development Payload
+
+This project's python scripts use payload credentials registered with the robot to authenticate on Spot.
+
+Follow [this](https://dev.bostondynamics.com/docs/python/daq_tutorial/daq1) to learn how to setup a new payload on Spot.
+
+Save the GUID and SECRET values to the .env file at the root of this project's repository.
+
+**NOTE: At [BuildWise](https://www.buildwise.be/en/), there already is a "Dev Payload" payload registered on Spot. Ask for the GUID and SECRET values**
 
 ### ASDF
 
@@ -105,6 +120,7 @@ pip install -r requirements.txt
 |   six  |   [Six is a Python 2 and 3 compatibility library](https://pypi.org/project/six/)    |
 |   pyqt5  |   [Qt is set of cross-platform C++ libraries that implement high-level APIs for accessing many aspects of modern desktop and mobile systems](https://pypi.org/project/PyQt5/)    |
 |   python-dotenv  |   [Python-dotenv reads key-value pairs from a .env file and can set them as environment variables](https://pypi.org/project/python-dotenv/)    |
+|   mock    |   [mock is a library for testing in Python](https://pypi.org/project/mock/)  |
 
 ### Set Up Database
 
@@ -131,17 +147,32 @@ python manage.py runserver
 
 ### Environment Variables
 
-This project's python scripts use environment variables. These are stored within a ```/api/scripts/.env```.
+This project's python scripts use environment variables. These are stored within the ```.env``` file at the root of this project's directory.
 
 Create the .env file and paste the following inside it (values are placeholders):
 
 ```bash
-BOSDYN_CLIENT_USERNAME=user 
+BOSDYN_CLIENT_ADMIN_USERNAME=admin_user 
+BOSDYN_CLIENT_ADMIN_PASSWORD=admin_password
+BOSDYN_CLIENT_USERNAME=user
 BOSDYN_CLIENT_PASSWORD=password
 ROBOT_IP=192.168.80.3
+SELF_IP=192.168.80.100
 ROBOT_ESTOP_TIMEOUT_SEC=5
 BOSDYN_CLIENT_LOGGING_VERBOSE=True
+GUID=GUID
+SECRET=SECRET
 ```
+
+### Development Payload
+
+This project's python scripts use payload credentials registered with the robot to authenticate on Spot.
+
+Follow [this](https://dev.bostondynamics.com/docs/python/daq_tutorial/daq1) to learn how to setup a new payload on Spot.
+
+Save the GUID and SECRET values to the .env file at the root of this project's repository.
+
+**NOTE: At [BuildWise](https://www.buildwise.be/en/), there already is a "Dev Payload" payload registered on Spot. Ask for the GUID and SECRET values**
 
 ### Start Dockerized Web Server
 
@@ -169,15 +200,6 @@ First, run the server. Then, follow [this](http://127.0.0.1:8000/api/) link (loc
 ## Tests
 
 All test files are located inside the /tests/ folder.
-
-<!-- ### Dependencies
-
-Some tests rely on [this](https://github.com/TheoPierne/spot-server-js) repository.
-
-cd to /api/scripts and clone it:
-```bash
-git clone https://github.com/TheoPierne/spot-server-js.git
-``` -->
 
 ### Execute All Tests
 
