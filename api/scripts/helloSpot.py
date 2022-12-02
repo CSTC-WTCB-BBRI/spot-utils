@@ -25,8 +25,6 @@ import os
 import sys
 import time
 
-from dotenv import load_dotenv
-
 ## Boston Dynamics
 import bosdyn.client.util
 from bosdyn.client.estop import EstopClient
@@ -37,10 +35,12 @@ from bosdyn.client.robot_command import RobotCommandBuilder, RobotCommandClient,
 from .estop_nogui import EstopNoGui
 
 ## Environment variables
-load_dotenv()
+from dotenv import load_dotenv
+from manage import ROOT_DIR
+
+load_dotenv(ROOT_DIR + '.env')
 
 ROBOT_IP = os.getenv('ROBOT_IP')
-CLIENT_NAME = os.getenv('CLIENT_NAME')
 ROBOT_ESTOP_TIMEOUT_SEC = os.getenv('ROBOT_ESTOP_TIMEOUT_SEC')
 BOSDYN_CLIENT_LOGGING_VERBOSE = os.getenv('BOSDYN_CLIENT_LOGGING_VERBOSE')
 BOSDYN_CLIENT_USERNAME = os.getenv('BOSDYN_CLIENT_USERNAME')
@@ -137,7 +137,7 @@ def main():
     bosdyn.client.util.setup_logging(BOSDYN_CLIENT_LOGGING_VERBOSE)
     
     # Create robot object
-    sdk = bosdyn.client.create_standard_sdk(CLIENT_NAME)
+    sdk = bosdyn.client.create_standard_sdk("HelloSpot")
     robot = sdk.create_robot(ROBOT_IP)
     bosdyn.client.util.authenticate(robot, getSpotAuthentication())
 
