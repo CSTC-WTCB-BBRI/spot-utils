@@ -75,7 +75,6 @@ def hello_spot(robot, state_client):
         time.sleep(5)
 
         # Command the robot to stand up
-        robot.logger.info("Commanding robot to stand...")
         command_client = robot.ensure_client(RobotCommandClient.default_service_name)
         blocking_stand(command_client, timeout_sec=10)
         robot.logger.info("Robot standing.")
@@ -95,13 +94,12 @@ def hello_spot(robot, state_client):
         time.sleep(3)
 
         # Log a comment
-        log_comment = "HelloSpot tutorial user comment."
+        log_comment = "HelloSpot script executed from the browser."
         robot.operator_comment(log_comment)
         robot.logger.info('Added comment "%s" to robot log.', log_comment)
 
         # Sit the robot down
-        robot.logger.info("Commanding robot to sit...")
-        cmd = RobotCommandBuilder.sit_command()
+        cmd = RobotCommandBuilder.synchro_sit_command()
         command_client.robot_command(cmd)
         robot.logger.info("Robot sitting.")
         time.sleep(3)
