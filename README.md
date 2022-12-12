@@ -20,11 +20,21 @@ BOSDYN_CLIENT_ADMIN_PASSWORD=admin_password
 BOSDYN_CLIENT_USERNAME=user
 BOSDYN_CLIENT_PASSWORD=password
 ROBOT_IP=192.168.80.3
+ROBOT_USERNAME=SPOT_CORE_USERNAME
+ROBOT_SSH_PORT=22
+ROBOT_SPOT_UTILS_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/spot-utils/
+ROBOT_LIBUVC_THETA_SAMPLE_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/libuvc-theta-sample/
 SELF_IP=192.168.80.100
 ROBOT_ESTOP_TIMEOUT_SEC=5
 BOSDYN_CLIENT_LOGGING_VERBOSE=True
 GUID=GUID
 SECRET=SECRET
+```
+
+To get the value of SELF_IP (this value might change over time), run:
+```bash
+python3 -m bosdyn.client $ROBOT_IP self-ip
+# The IP address of the computer used to talk to the robot is: 192.168.80.100
 ```
 
 ### Development Payload
@@ -123,6 +133,7 @@ pip install -r requirements.txt
 |   mock    |   [mock is a library for testing in Python](https://pypi.org/project/mock/)  |
 |   numpy   |   [NumPy is the fundamental package for array computing with Python](https://pypi.org/project/numpy/)    |
 |   scipy   |   [SciPy (pronounced “Sigh Pie”) is an open-source software for mathematics, science, and engineering](https://pypi.org/project/scipy/)   |
+|   opencv-python   |   [Pre-built CPU-only OpenCV packages for Python.](https://pypi.org/project/opencv-python/)   |
 
 ### Set Up Database
 
@@ -138,6 +149,10 @@ cd to the root of the project's directory and run:
 ```bash
 python manage.py createsuperuser
 ```
+
+### Setup the needed services
+
+Refer to the [Services](##services) section.
 
 ### Start Web Server
 
@@ -159,6 +174,10 @@ BOSDYN_CLIENT_ADMIN_PASSWORD=admin_password
 BOSDYN_CLIENT_USERNAME=user
 BOSDYN_CLIENT_PASSWORD=password
 ROBOT_IP=192.168.80.3
+ROBOT_USERNAME=SPOT_CORE_USERNAME
+ROBOT_SSH_PORT=22
+ROBOT_SPOT_UTILS_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/spot-utils/
+ROBOT_LIBUVC_THETA_SAMPLE_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/libuvc-theta-sample/
 SELF_IP=192.168.80.100
 ROBOT_ESTOP_TIMEOUT_SEC=5
 BOSDYN_CLIENT_LOGGING_VERBOSE=True
@@ -175,6 +194,10 @@ Follow [this](https://dev.bostondynamics.com/docs/python/daq_tutorial/daq1) to l
 Save the GUID and SECRET values to the .env file at the root of this project's repository.
 
 **NOTE: At [BuildWise](https://www.buildwise.be/en/), there already is a "Dev Payload" payload registered on Spot. Ask for the GUID and SECRET values**
+
+### Setup the needed services
+
+Refer to the [Services](##services) section.
 
 ### Start Dockerized Web Server
 
@@ -195,9 +218,49 @@ First, run the server. Then, follow [this](http://127.0.0.1:8000) link (local de
 
 ## API Endpoints
 
-```TEMPORARY SECTION```
-
 First, run the server. Then, follow [this](http://127.0.0.1:8000/api/) link (local dev server) or [this](http://127.0.0.1:80/api) link (dockerized dev server) to get all public api routes.
+
+## Services
+
+### SpotCameras Image Service
+
+For retrieving Spot's built-in cameras' live video feeds, this project uses the ```ImageClient``` default service. This service is available by default on any Spot robot.
+
+For retrieving Spot's other cameras' live video feeds, this project uses a service called ```spot-cameras-image-service```.
+
+Some USB camera devices are not available by default as a ```/dev/video*``` device. If this is the case for your USB camera, refer to the [RicohTheta Image Service](###ricoh-theta-z1) section.
+
+This service was developped for this project and does not exist on the factory version of Spot.
+
+First, create a ```.dockerenv``` file (refer to the [Development Payload](###development-payload) section for the values of GUID and SECRET):
+```bash
+IMAGE_SERVICE_NAME=spot-cameras-image-service
+AUTHORITY='robot-web-cam'
+SERVICE_TYPE='bosdyn.api.ImageService'
+CAMERA_PORT=5000
+GUID=GUID
+SECRET=SECRET
+ROBOT_IP=192.168.50.3
+SELF_IP=192.168.50.5
+```
+
+To enable it, there is a few required steps:
+* Clone this project on the SPOT CORE:
+```bash
+# Change directory to match the ROBOT_SPOT_UTILS_ROOT_DIR environment variable
+git clone https://github.com/CSTC-WTCB-BBRI/spot-utils.git
+```
+* Build the docker image:
+```bash
+cd $ROBOT_SPOT_UTILS_ROOT_DIR/spot-services/SpotCameras
+docker build -t spot_cameras_image_service .
+```
+**NOTE**: depending on the specifications of your Spot CORE, you might need to [build the image for an ARM64 architecture](https://dev.bostondynamics.com/docs/python/daq_tutorial/daq4#recreate-docker-images-for-arm64-architecture).
+* If your camera is a RICOH THETA, make sure to follow the steps described in the [RicohTheta Image Service](###ricoh-theta-z1) section.
+* Add the Spot CORE user to the video and plugdev groups:
+```bash
+sudo usermod -aG plugdev,video spot
+```
 
 ## Tests
 
@@ -208,4 +271,82 @@ All test files are located inside the /tests/ folder.
 cd to the root of the project's directory and run:
 ```bash
 python manage.py test tests
+```
+
+## Examples
+
+### RICOH THETA Z1
+
+First, plug the RICOH THETA Z1 USB camera to the Spot CORE.
+
+Making this camera available on the Spot CORE requires a few adaptations. Connect the Spot CORE to internet and access its terminal, then run:
+```bash
+# Various dependencies
+sudo apt install -y cmake libusb-1.0-0-dev libjpeg-dev
+# GStreamer packages
+sudo apt install -y libgstreamer1.0-0 \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    gstreamer1.0-doc \
+    gstreamer1.0-tools \
+    gstreamer1.0-x \
+    gstreamer1.0-alsa \
+    gstreamer1.0-gl \
+    gstreamer1.0-gtk3 \
+    gstreamer1.0-qt5 \
+    gstreamer1.0-pulseaudio \
+    libgstreamer-plugins-base1.0-dev
+
+# cd to wherever you want to build source code
+# for example:
+mkdir ~/src
+cd ~/src
+
+# Install libuvc-theta
+git clone https://github.com/ricohapi/libuvc-theta.git
+mkdir libuvc-theta/build
+cd libuvc-theta/build
+cmake ..
+make
+sudo make install
+cd ../..
+
+# Install libuvc-theta-sample
+git clone https://github.com/ricohapi/libuvc-theta-sample.git
+cd libuvc-theta-sample/gst
+make
+sudo /sbin/ldconfig -v
+cd ../..
+
+# Install v4l2loopback
+git clone https://github.com/umlaeute/v4l2loopback.git
+cd v4l2loopback
+make
+sudo make install
+sudo depmod -a
+```
+
+Now, you can run:
+```bash
+# This will load the v4l2loopback module to the kernel, but you will need to execute this command each time you restart the robot...
+sudo modprobe v4l2loopback
+# This will make sure the v4l2loopback module is automatically loaded to the kernel on boot
+sudo vim /etc/modules
+# Add a line with "v4l2loopback" at the end of the file
+# Save and quit
+# On the next boot, the module will be available
+```
+
+You should then see a new ```/dev/video0``` device.
+
+Right now, this is a "Dummy Device" and it can't access the RICOH THETA Z1 camera. This project has scripts to automatically set this up, you don't have to do anything!
+
+Should you want to set it up yourself though, just execute this:
+```bash
+# make sure the camera is plugged and in "live stream" mode
+# cd to wherever you cloned the libuvc-theta-sample repository
+./libuvc-theta-sample/gst/gst_loopback
 ```

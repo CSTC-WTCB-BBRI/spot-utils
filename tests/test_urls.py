@@ -8,6 +8,7 @@ import mock
 from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 # Local imports
 import api.scripts.helloSpot
@@ -84,4 +85,70 @@ class ApiUrlsTestCase(TestCase):
         Test case for checking availability of the /api/hello-spot/ API route
         """
         response = self.client.get(reverse('api-hello-spot'))
+        self.assertEqual(response.status_code, 200)
+
+    def mocked_get_camera_feed(*args):
+        return HttpResponse('cameras')
+    
+    @mock.patch('api.views.getCameraFeed', mocked_get_camera_feed)
+    def test_camera_route_is_accessible(self):
+        """
+        Test case for checking availability of the /api/camera/ API route
+        """
+        response = self.client.get(reverse('api-get-camera-feed'))
+        self.assertEqual(response.status_code, 200)
+
+    def mocked_close_camera_feed(*args):
+        return HttpResponse('closed camera')
+    
+    @mock.patch('api.views.closeCameraFeed', mocked_close_camera_feed)
+    def test_close_camera_route_is_accessible(self):
+        """
+        Test case for checking availability of the /api/camera/ API route
+        """
+        response = self.client.get(reverse('api-close-camera'))
+        self.assertEqual(response.status_code, 200)
+
+    def mocked_start_gst_loopback(*args):
+        return HttpResponse('started gst_loopback')
+    
+    @mock.patch('api.views.startGstLoopbackView', mocked_start_gst_loopback)
+    def test_start_gst_loopback_route_is_accessible(self):
+        """
+        Test case for checking availability of the /api/camera/ API route
+        """
+        response = self.client.get(reverse('api-start-gst-loopback'))
+        self.assertEqual(response.status_code, 200)
+
+    def mocked_stop_gst_loopback(*args):
+        return HttpResponse('stopped gst_loopback')
+    
+    @mock.patch('api.views.stopGstLoopbackView', mocked_stop_gst_loopback)
+    def test_stop_gst_loopback_route_is_accessible(self):
+        """
+        Test case for checking availability of the /api/stop-gst-loopback/ API route
+        """
+        response = self.client.get(reverse('api-stop-gst-loopback'))
+        self.assertEqual(response.status_code, 200)
+
+    def mocked_start_spot_cameras_image_service(*args):
+        return HttpResponse('started SpotCameras')
+    
+    @mock.patch('api.views.startSpotCamerasImageServiceView', mocked_start_spot_cameras_image_service)
+    def test_start_gst_loopback_route_is_accessible(self):
+        """
+        Test case for checking availability of the /api/start-spot-cameras/ API route
+        """
+        response = self.client.get(reverse('api-start-spot-cameras'))
+        self.assertEqual(response.status_code, 200)
+
+    def mocked_stop_spot_cameras_image_service(*args):
+        return HttpResponse('stopped SpotCameras')
+    
+    @mock.patch('api.views.stopSpotCamerasImageServiceView', mocked_stop_spot_cameras_image_service)
+    def test_stop_gst_loopback_route_is_accessible(self):
+        """
+        Test case for checking availability of the /api/stop-spot-cameras/ API route
+        """
+        response = self.client.get(reverse('api-stop-gst-loopback'))
         self.assertEqual(response.status_code, 200)

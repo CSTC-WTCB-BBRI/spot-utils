@@ -37,7 +37,7 @@ from bosdyn.client.image_service_helpers import (VisualImageSource, CameraBaseIm
 ## Environment Variables
 from dotenv import load_dotenv
 
-load_dotenv('.env')
+load_dotenv('.dockerenv')
 
 IMAGE_SERVICE_NAME = os.getenv('IMAGE_SERVICE_NAME')
 AUTHORITY = os.getenv('AUTHORITY')
@@ -129,8 +129,8 @@ class SpotCameras(CameraInterface):
         # Note, we are currently not setting any information for the transform snapshot or the frame
         # name for an image sensor since this information can't be determined with openCV.
 
-        resize_ratio = image_req.resize_ratio
-        quality_percent = image_req.quality_percent
+        resize_ratio = 0.3
+        quality_percent = 50
 
         if resize_ratio < 0 or resize_ratio > 1:
             raise ValueError("Resize ratio %s is out of bounds." % resize_ratio)
@@ -167,10 +167,6 @@ class SpotCameras(CameraInterface):
 def device_name_to_source_name(device_name):
     if type(device_name) == int:
         return "video" + str(device_name)
-    elif 'rtsp://' in device_name and '@' in device_name:
-        return device_name.split('@',1)[1]
-    elif 'rtsp://' in device_name:
-        return device_name.split('://',1)[1]
     else:
         return os.path.basename(device_name)
 
@@ -242,4 +238,3 @@ if __name__ == '__main__':
     # Attach the keep alive to the service runner and run until a SIGINT is received.
     with keep_alive:
         service_runner.run_until_interrupt()
-    
