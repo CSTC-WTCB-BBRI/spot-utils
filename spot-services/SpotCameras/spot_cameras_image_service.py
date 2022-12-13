@@ -242,13 +242,4 @@ if __name__ == '__main__':
     # Attach the keep alive to the service runner and run until a SIGINT is received.
     with keep_alive:
         service_runner.run_until_interrupt()
-    # spot_camera = SpotCameras("2")
-    # img_src = VisualImageSource(spot_camera.image_source_name, spot_camera, rows=spot_camera.rows,
-    #                                 cols=spot_camera.cols, gain=spot_camera.camera_gain,
-    #                                 exposure=spot_camera.camera_exposure,
-    #                                 pixel_formats=[image_pb2.Image.PIXEL_FORMAT_GREYSCALE_U8,
-    #                                                image_pb2.Image.PIXEL_FORMAT_RGB_U8])
-    # ret, frame = spot_camera.capture.read()
-    # cv2.imshow('frame', frame)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    
