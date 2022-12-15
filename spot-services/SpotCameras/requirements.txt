@@ -1,0 +1,5 @@
+bosdyn-client >= 3.1
+bosdyn-mission
+bosdyn-choreography-client
+opencv-python==4.5.*
+python-dotenv

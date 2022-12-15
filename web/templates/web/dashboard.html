@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>spot-utils - dashboard</title>
+    </head>
+    <script>
+        const pageHideListener = (event) => {
+            fetch('api/close-camera')
+        };
+
+        const beforeUnloadListener = (event) => {
+            fetch('api/close-camera')
+        };
+
+        window.addEventListener("pagehide", pageHideListener);
+        window.addEventListener("beforeunload", beforeUnloadListener);
+    </script>
+    <body>
+        <header>
+            <h1>DASHBOARD</h1>
+        </header>
+        <img src="api/camera"> 
+    </body>
+</html>
