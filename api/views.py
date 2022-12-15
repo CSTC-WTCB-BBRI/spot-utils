@@ -116,9 +116,13 @@ def getCameraFeed(request):
     robot.authenticate_from_payload_credentials(GUID, SECRET)
     robot.sync_with_directory()
     robot.time_sync.wait_for_sync()
-    image_client = robot.ensure_client(ImageClient.default_service_name)
-    try : 
-        camera = SpotCameras(0, image_client)
+    camera_request = request.GET.get('camera', 'frontleft_fisheye_image')
+    if camera_request == "video99":
+        image_client = robot.ensure_client("spot-cameras-image-service")
+    else:
+        image_client = robot.ensure_client(ImageClient.default_service_name)
+    try :
+        camera = SpotCameras(camera_request, image_client)
         return StreamingHttpResponse(gen(camera), content_type="multipart/x-mixed-replace;boundary=frame")
     except:
         pass
