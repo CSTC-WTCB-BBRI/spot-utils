@@ -244,6 +244,11 @@ ROBOT_IP=192.168.50.3
 SELF_IP=192.168.50.5
 ```
 
+Then, create a ```.env``` file (the video device number should be 0 if you have no other usb camera connected to the Spot CORE):
+```bash
+ORIG_VIDEO_DEV=/dev/video0
+```
+
 To enable it, there is a few required steps:
 * Clone this project on the SPOT CORE:
 ```bash
