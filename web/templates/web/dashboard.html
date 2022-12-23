@@ -2,8 +2,12 @@
 <html>
     <head>
         <title>spot-utils - dashboard</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}">
     </head>
     <script>
+        let previousWasRicoh;
+        
         const pageHideListener = (event) => {
             fetch('api/close-camera')
         };
@@ -12,13 +16,52 @@
             fetch('api/close-camera')
         };
 
+        const changeCamera = (event) => {
+            let cameraRequest = document.getElementById("cameras").value;
+            let img = document.getElementById("camera-view");
+            if (cameraRequest === "video99") {
+                let response = window.confirm("RICOH THETA Z1 camera is plugged");
+                if (response) {
+                    previousWasRicoh = true;
+                    fetch('api/start-spot-cameras')
+                        .then(setTimeout(function() {
+                            waitForRicohFeedThenDisplay(img, cameraRequest);
+                        }, 3000))
+                } else {
+                    document.getElementById("cameras").value = "frontleft_fisheye_image";
+                    img.src = "api/camera?camera=" + cameraRequest;
+                }
+            } else if (previousWasRicoh) {
+                previousWasRicoh = false;
+                img.src = "api/camera?camera=" + cameraRequest;
+                fetch('api/stop-spot-cameras')
+            } else {
+                previousWasRicoh = false;
+                img.src = "api/camera?camera=" + cameraRequest;
+            }
+        };
+
+        const waitForRicohFeedThenDisplay = (img, cameraRequest) => {
+            img.src = "api/camera?camera=" + cameraRequest;
+        }
+
         window.addEventListener("pagehide", pageHideListener);
         window.addEventListener("beforeunload", beforeUnloadListener);
     </script>
     <body>
-        <header>
+        <header class="text-center">
             <h1>DASHBOARD</h1>
         </header>
-        <img src="api/camera?camera=video99"> 
+
+        <img src="api/camera?camera=frontleft_fisheye_image" class="image-center" id="camera-view">
+
+        <select name="cameras" id="cameras" class="center" onchange="changeCamera()">
+            <option value="frontleft_fisheye_image">Front Left Fisheye Camera</option>
+            <option value="frontright_fisheye_image">Front Right Fisheye Camera</option>
+            <option value="left_fisheye_image">Left Fisheye Camera</option>
+            <option value="right_fisheye_image">Right Fisheye Camera</option>
+            <option value="back_fisheye_image">Back Fisheye Camera</option>
+            <option value="video99">RICOH THETA Z1</option>
+        </select>
     </body>
 </html>

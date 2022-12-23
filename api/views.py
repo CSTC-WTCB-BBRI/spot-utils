@@ -4,6 +4,7 @@
 
 # Imports
 import os
+import time
 
 ## Django REST framework
 from rest_framework.views import APIView
@@ -110,6 +111,8 @@ def getCameraFeed(request):
     API endpoint for the camera live video feed
     """
     global camera
+    if camera is not None:
+        camera.__del__()
     # Create robot object with an image client.
     sdk = bosdyn.client.create_standard_sdk('image_capture')
     robot = sdk.create_robot(ROBOT_IP)
@@ -136,14 +139,17 @@ def closeCameraFeed(request):
         camera.__del__()
     return HttpResponse()
 
-def startGstLoopbackView(request):
+def startSpotCamerasImageServiceView(request):
     """
-    API endpoint for running the gst_loopback script on Spot
+    API endpoint for opening the RICOH THETA camera live video feed
     """
     global gstLoopbackHelper
     gstLoopbackHelper = GstLoopbackHelper()
     gstLoopbackHelper.start()
-    return HttpResponse('Started gst_loopback on the robot.')
+    global spotCamerasImageServiceHelper
+    spotCamerasImageServiceHelper = SpotCamerasImageServiceHelper()
+    spotCamerasImageServiceHelper.start()
+    return HttpResponse('Started SpotCameras image service on the robot.')
 
 def stopGstLoopbackView(request):
     """
@@ -154,20 +160,15 @@ def stopGstLoopbackView(request):
         gstLoopbackHelper.stop()
     return HttpResponse('Stopped gst_loopback on the robot.')
 
-def startSpotCamerasImageServiceView(request):
-    """
-    API endpoint for running the SpotCameras image service on Spot
-    """
-    global spotCamerasImageServiceHelper
-    spotCamerasImageServiceHelper = SpotCamerasImageServiceHelper()
-    spotCamerasImageServiceHelper.start()
-    return HttpResponse('Started SpotCameras image service on the robot.')
-
 def stopSpotCamerasImageServiceView(request):
     """
-    API endpoint for stopping the SpotCameras image service on Spot
+    API endpoint for closing the RICOH THETA camera live video feed
     """
     global spotCamerasImageServiceHelper
     if spotCamerasImageServiceHelper is not None:
         spotCamerasImageServiceHelper.stop()
+    time.sleep(5)
+    global gstLoopbackHelper
+    if gstLoopbackHelper is not None:
+        gstLoopbackHelper.stop()
     return HttpResponse('Stopped SpotCameras image service on the robot.')

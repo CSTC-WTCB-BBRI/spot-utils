@@ -109,17 +109,6 @@ class ApiUrlsTestCase(TestCase):
         response = self.client.get(reverse('api-close-camera'))
         self.assertEqual(response.status_code, 200)
 
-    def mocked_start_gst_loopback(*args):
-        return HttpResponse('started gst_loopback')
-    
-    @mock.patch('api.views.startGstLoopbackView', mocked_start_gst_loopback)
-    def test_start_gst_loopback_route_is_accessible(self):
-        """
-        Test case for checking availability of the /api/camera/ API route
-        """
-        response = self.client.get(reverse('api-start-gst-loopback'))
-        self.assertEqual(response.status_code, 200)
-
     def mocked_stop_gst_loopback(*args):
         return HttpResponse('stopped gst_loopback')
     
@@ -140,15 +129,4 @@ class ApiUrlsTestCase(TestCase):
         Test case for checking availability of the /api/start-spot-cameras/ API route
         """
         response = self.client.get(reverse('api-start-spot-cameras'))
-        self.assertEqual(response.status_code, 200)
-
-    def mocked_stop_spot_cameras_image_service(*args):
-        return HttpResponse('stopped SpotCameras')
-    
-    @mock.patch('api.views.stopSpotCamerasImageServiceView', mocked_stop_spot_cameras_image_service)
-    def test_stop_gst_loopback_route_is_accessible(self):
-        """
-        Test case for checking availability of the /api/stop-spot-cameras/ API route
-        """
-        response = self.client.get(reverse('api-stop-gst-loopback'))
         self.assertEqual(response.status_code, 200)
