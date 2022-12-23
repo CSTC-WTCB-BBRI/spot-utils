@@ -6,6 +6,7 @@ import numpy as np
 from scipy import ndimage
 import cv2 as cv
 import threading
+import time
 
 ## Boston Dynamics
 import bosdyn.client
@@ -17,7 +18,8 @@ ROTATION_ANGLE = {
     'frontleft_fisheye_image': -90,
     'frontright_fisheye_image': -90,
     'left_fisheye_image': 0,
-    'right_fisheye_image': 180
+    'right_fisheye_image': 180,
+    'video99': 0
 }
 
 # Main
@@ -25,22 +27,16 @@ class SpotCameras(object):
     """
     Provides an interface of communication with Spot's Image Services.
     """
-    def __init__(self, camera_index, image_client):
+    def __init__(self, camera_request, image_client):
         """
         Construct a new SpotCameras instance
 
             Parameters:
-                camera_index (int): NOT USED
+                camera_request (str): Camera requested
                 image_client (Client): Client for Spot's Image Service
         """
-        self.cameras = {
-            'back_fisheye_image': 'back_fisheye_image',
-            'frontleft_fisheye_image': 'frontleft_fisheye_image',
-            'frontright_fisheye_image': 'frontright_fisheye_image',
-            'left_fisheye_image': 'left_fisheye_image',
-            'right_fisheye_image': 'right_fisheye_image'
-        }
         self.frame = None
+        self.camera_request = camera_request
         self.image_client = image_client
         self.getImage()
         self.updating = True
@@ -56,7 +52,7 @@ class SpotCameras(object):
         """
         Querries Spot's Image Service to get a capture of the required camera.
         """
-        image_responses = self.image_client.get_image_from_sources([self.cameras['frontleft_fisheye_image']])
+        image_responses = self.image_client.get_image_from_sources([self.camera_request])
         image = image_responses[0]
         num_bytes = 1
         if image.shot.image.pixel_format == image_pb2.Image.PIXEL_FORMAT_DEPTH_U16:
