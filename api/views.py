@@ -18,6 +18,8 @@ from bosdyn.client.image import ImageClient
 # Local imports
 from .scripts.helloSpot import main
 from .scripts.spot_cameras import gen, SpotCameras
+from .scripts.gst_loopback_helper import GstLoopbackHelper
+from .scripts.spot_cameras_image_service_helper import SpotCamerasImageServiceHelper
 
 ## Environment variables
 from dotenv import load_dotenv
@@ -31,6 +33,8 @@ SECRET = os.getenv('SECRET')
 
 # Variables
 camera = None
+gstLoopbackHelper = None
+spotCamerasImageServiceHelper = None
 
 
 # Main
@@ -49,6 +53,42 @@ class ApiRoutes(APIView):
                 'body': None,
                 'description': 'Hello, Spot!'
             },
+            {
+                'Endpoint': '/camera/',
+                'method': 'GET',
+                'body': None,
+                'description': 'Get live camera feed from Spot\'s cameras'
+            },
+            {
+                'Endpoint': '/close-camera/',
+                'method': 'GET',
+                'body': None,
+                'description': 'Close live camera feed from Spot\'s cameras'
+            },
+            {
+                'Endpoint': '/start-gst-loopback',
+                'method': 'GET',
+                'body': None,
+                'description': 'Execute gst_loopback for RICOH THETA'
+            },
+            {
+                'Endpoint': '/stop-gst-loopback',
+                'method': 'GET',
+                'body': None,
+                'description': 'Stop gst_loopback for RICOH THETA'
+            },
+            {
+                'Endpoint': '/start-spot-cameras',
+                'method': 'GET',
+                'body': None,
+                'description': 'Execute SpotCameras image service'
+            },
+            {
+                'Endpoint': '/stop-spot-cameras',
+                'method': 'GET',
+                'body': None,
+                'description': 'Stop SpotCameras image service'
+            }
         ]
         return Response(routes)
 
@@ -91,3 +131,39 @@ def closeCameraFeed(request):
     if camera is not None:
         camera.__del__()
     return HttpResponse()
+
+def startGstLoopbackView(request):
+    """
+    API endpoint for running the gst_loopback script on Spot
+    """
+    global gstLoopbackHelper
+    gstLoopbackHelper = GstLoopbackHelper()
+    gstLoopbackHelper.start()
+    return HttpResponse('Started gst_loopback on the robot.')
+
+def stopGstLoopbackView(request):
+    """
+    API endpoint for stopping the gst_loopback script on Spot
+    """
+    global gstLoopbackHelper
+    if gstLoopbackHelper is not None:
+        gstLoopbackHelper.stop()
+    return HttpResponse('Stopped gst_loopback on the robot.')
+
+def startSpotCamerasImageServiceView(request):
+    """
+    API endpoint for running the SpotCameras image service on Spot
+    """
+    global spotCamerasImageServiceHelper
+    spotCamerasImageServiceHelper = SpotCamerasImageServiceHelper()
+    spotCamerasImageServiceHelper.start()
+    return HttpResponse('Started SpotCameras image service on the robot.')
+
+def stopSpotCamerasImageServiceView(request):
+    """
+    API endpoint for stopping the SpotCameras image service on Spot
+    """
+    global spotCamerasImageServiceHelper
+    if spotCamerasImageServiceHelper is not None:
+        spotCamerasImageServiceHelper.stop()
+    return HttpResponse('Stopped SpotCameras image service on the robot.')

@@ -1,11 +1,17 @@
+#!/usr/bin/env python
+"""Allows querrying Spot's Image Services"""
+
+# Imports
 import numpy as np
 from scipy import ndimage
 import cv2 as cv
 import threading
 
+## Boston Dynamics
 import bosdyn.client
 from bosdyn.api import image_pb2
 
+# Variables
 ROTATION_ANGLE = {
     'back_fisheye_image': 0,
     'frontleft_fisheye_image': -90,
@@ -14,8 +20,19 @@ ROTATION_ANGLE = {
     'right_fisheye_image': 180
 }
 
+# Main
 class SpotCameras(object):
+    """
+    Provides an interface of communication with Spot's Image Services.
+    """
     def __init__(self, camera_index, image_client):
+        """
+        Construct a new SpotCameras instance
+
+            Parameters:
+                camera_index (int): NOT USED
+                image_client (Client): Client for Spot's Image Service
+        """
         self.cameras = {
             'back_fisheye_image': 'back_fisheye_image',
             'frontleft_fisheye_image': 'frontleft_fisheye_image',
@@ -30,9 +47,15 @@ class SpotCameras(object):
         threading.Thread(target=self.update, args=()).start()
     
     def __del__(self):
+        """
+        Stops the interface from updating the frame.
+        """
         self.updating = False
     
     def getImage(self):
+        """
+        Querries Spot's Image Service to get a capture of the required camera.
+        """
         image_responses = self.image_client.get_image_from_sources([self.cameras['frontleft_fisheye_image']])
         image = image_responses[0]
         num_bytes = 1
@@ -62,6 +85,9 @@ class SpotCameras(object):
         self.frame = img
 
     def get_frame(self):
+        """
+        Encodes the frame in JPG.
+        """
         frame = self.frame
         try:
             _, jpeg = cv.imencode('.jpg', frame)
@@ -70,10 +96,19 @@ class SpotCameras(object):
             return False
     
     def update(self):
+        """
+        Updates the stored frame.
+        """
         while self.updating:
             self.getImage()
 
 def gen(camera):
+    """
+    Generates a stream from frames.
+
+        Parameters:
+            camera (SpotCameras): instance of the SpotCameras class, connected to the robot's requested Image Service.
+    """
     while True:
         frame = camera.get_frame()
         if (not frame):
