@@ -1,0 +1,17 @@
+version: "3.3"
+services:
+  app:
+    hostname: django
+    build:
+      context: ../..
+      dockerfile: ops/dev/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - app_env
+      - app_env.secrets
+    ports:
+      - ${APP_PORT:-8000}:8000
+    volumes:
+      - ../../api:/app/api
+      - ../../web:/app/web
+      - ../../spotUtils:/app/spot_utils
