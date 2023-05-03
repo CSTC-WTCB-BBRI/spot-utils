@@ -13,3 +13,7 @@ services:
       - ${APP_PORT:-8000}:8000
     volumes:
       - ../..:/app
+      - kvstore_data:/app/data
+
+volumes:
+  kvstore_data:
