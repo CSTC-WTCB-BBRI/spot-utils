@@ -6,3 +6,5 @@
 Dockerfile
 LICENSE
 README.md
+/.env
+/ops
