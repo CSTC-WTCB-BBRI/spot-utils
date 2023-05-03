@@ -103,6 +103,7 @@ celerybeat.pid
 
 # Environments
 .env
+!/ops/dev/.env
 .dockerenv
 .venv
 env/
@@ -110,6 +111,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+app_env.secrets
 
 # Spyder project settings
 .spyderproject
@@ -128,3 +130,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Docker Compose
+docker-compose.override.yml
