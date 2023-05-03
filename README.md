@@ -6,7 +6,7 @@ This repository aims at developping a Web Interface to control and interact with
 
 This project is meant to be run on linux machines.
 
-If running on a docker container, see the [Getting Started (Docker)](##getting-started-(docker)) section.
+If running on a docker container, refer to [this document](./ops/README.md). Otherwise, keep reading!
 
 ### Environment Variables
 
@@ -160,65 +160,14 @@ cd to the root of the project's directory and run:
 ```bash
 python manage.py runserver
 ```
-## Getting Started (Docker)
-
-### Environment Variables
-
-This project's python scripts use environment variables. These are stored within the ```.env``` file at the root of this project's directory.
-
-Create the .env file and paste the following inside it (values are placeholders):
-
-```bash
-BOSDYN_CLIENT_ADMIN_USERNAME=admin_user 
-BOSDYN_CLIENT_ADMIN_PASSWORD=admin_password
-BOSDYN_CLIENT_USERNAME=user
-BOSDYN_CLIENT_PASSWORD=password
-ROBOT_IP=192.168.80.3
-ROBOT_USERNAME=SPOT_CORE_USERNAME
-ROBOT_SSH_PORT=22
-ROBOT_SPOT_UTILS_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/spot-utils/
-ROBOT_LIBUVC_THETA_SAMPLE_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/libuvc-theta-sample/
-SELF_IP=192.168.80.100
-ROBOT_ESTOP_TIMEOUT_SEC=5
-BOSDYN_CLIENT_LOGGING_VERBOSE=True
-GUID=GUID
-SECRET=SECRET
-```
-
-### Development Payload
-
-This project's python scripts use payload credentials registered with the robot to authenticate on Spot.
-
-Follow [this](https://dev.bostondynamics.com/docs/python/daq_tutorial/daq1) to learn how to setup a new payload on Spot.
-
-Save the GUID and SECRET values to the .env file at the root of this project's repository.
-
-**NOTE: At [BuildWise](https://www.buildwise.be/en/), there already is a "Dev Payload" payload registered on Spot. Ask for the GUID and SECRET values**
-
-### Setup the needed services
-
-Refer to the [Services](##services) section.
-
-### Start Dockerized Web Server
-
-cd to the root of the project's directory and run:
-```bash
-docker compose up build -d
-```
-
-### Stop Dockerized Web Server
-
-```bash
-docker compose down
-```
 
 ## Access Development Web Application
 
-First, run the server. Then, follow [this](http://127.0.0.1:8000) link (local dev server) or [this](http://127.0.0.1:80) link (dockerized dev server) to access the web application.
+First, run the server. Then, follow [this](http://127.0.0.1:8000) link.
 
 ## API Endpoints
 
-First, run the server. Then, follow [this](http://127.0.0.1:8000/api/) link (local dev server) or [this](http://127.0.0.1:80/api) link (dockerized dev server) to get all public api routes.
+First, run the server. Then, follow [this](http://127.0.0.1:8000/api/) link..
 
 ## Services
 
