@@ -5,7 +5,6 @@
 # Imports
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Main
 """
@@ -18,5 +17,3 @@ urlpatterns = [
     path('', include('web.urls')),
     path('api/', include('api.urls')),
 ]
-
-urlpatterns += staticfiles_urlpatterns()
