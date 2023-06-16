@@ -5,7 +5,7 @@ services:
     build:
       context: ../..
       dockerfile: ops/dev/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn -b 0.0.0.0:8000 spotUtils.wsgi
     env_file:
       - app_env
       - app_env.secrets
