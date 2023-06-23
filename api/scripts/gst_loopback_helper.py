@@ -32,32 +32,24 @@ class GstLoopbackHelper(object):
         """
         Construct a new GstLoopbackHelper instance by connecting to the Spot CORE.
         """
-        if DEV_MODE == "True":
-            self.proc = subprocess.Popen(f"ssh -o StrictHostKeyChecking=no -tt {ROBOT_USERNAME}@{ROBOT_IP} -p {ROBOT_SSH_PORT}",
-                               shell=True,
-                               stdin=subprocess.PIPE, 
-                               stdout=subprocess.PIPE,
-                               universal_newlines=True,
-                               bufsize=0)
-        else:
-            self.proc = subprocess.Popen(f"bash",
-                               shell=True,
-                               stdin=subprocess.PIPE, 
-                               stdout=subprocess.PIPE,
-                               universal_newlines=True,
-                               bufsize=0)
+        self.sshProc = subprocess.Popen(f"ssh -o StrictHostKeyChecking=no -tt {ROBOT_USERNAME}@{ROBOT_IP} -p {ROBOT_SSH_PORT}",
+                            shell=True,
+                            stdin=subprocess.PIPE, 
+                            stdout=subprocess.PIPE,
+                            universal_newlines=True,
+                            bufsize=0)
     
     def start(self):
         """
         Starts the gst_loopback script
         """
         cmd = ROBOT_LIBUVC_THETA_SAMPLE_ROOT_DIR + "/gst/gst_loopback\n"
-        self.proc.stdin.write(cmd)
+        self.sshProc.stdin.write(cmd)
     
     def stop(self):
         """
         Stops the gst_loopback script
         """
-        self.proc.stdin.write("\n")
-        self.proc.stdin.write("exit\n")
-        self.proc.stdin.close()
+        self.sshProc.stdin.write("\n")
+        self.sshProc.stdin.write("exit\n")
+        self.sshProc.stdin.close()
