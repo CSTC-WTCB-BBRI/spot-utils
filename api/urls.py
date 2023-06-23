@@ -6,7 +6,7 @@
 from django.urls import path
 
 # Local imports
-from .views import ApiRoutes, HelloSpot, getCameraFeed, closeCameraFeed, stopGstLoopbackView, startSpotCamerasImageServiceView, stopSpotCamerasImageServiceView
+from .views import ApiRoutes, HelloSpot, getCameraFeed, closeCameraFeed, startSpotCamerasImageServiceView, stopSpotCamerasImageServiceView
 
 
 # Main

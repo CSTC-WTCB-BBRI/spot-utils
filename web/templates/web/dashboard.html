@@ -26,7 +26,7 @@
                     fetch('api/start-spot-cameras')
                         .then(setTimeout(function() {
                             waitForRicohFeedThenDisplay(img, cameraRequest);
-                        }, 3000))
+                        }, 6000))
                 } else {
                     document.getElementById("cameras").value = "frontleft_fisheye_image";
                     img.src = "api/camera?camera=" + cameraRequest;

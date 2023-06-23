@@ -27,7 +27,7 @@ class SpotCamerasImageServiceHelper(object):
         """
         Construct a new SpotCamerasImageServiceHelper instance by connecting to the Spot CORE.
         """
-        self.sshProc = subprocess.Popen(f"ssh -tt {ROBOT_USERNAME}@{ROBOT_IP} -p {ROBOT_SSH_PORT}",
+        self.sshProc = subprocess.Popen(f"ssh -o StrictHostKeyChecking=no -tt {ROBOT_USERNAME}@{ROBOT_IP} -p {ROBOT_SSH_PORT}",
                                shell=True,
                                stdin=subprocess.PIPE, 
                                stdout = subprocess.PIPE,
@@ -38,7 +38,7 @@ class SpotCamerasImageServiceHelper(object):
         """
         Starts the SpotCameras Image Service
         """
-        cmd1 = "cd " + ROBOT_SPOT_UTILS_ROOT_DIR + "spot-services/SpotCameras\n"
+        cmd1 = "cd " + ROBOT_SPOT_UTILS_ROOT_DIR + "/spot-services/SpotCameras\n"
         self.sshProc.stdin.write(cmd1)
         cmd2 = "docker-compose up -d\n"
         self.sshProc.stdin.write(cmd2)
@@ -47,7 +47,7 @@ class SpotCamerasImageServiceHelper(object):
         """
         Stops the SpotCameras Image Service
         """
-        cmd1 = "cd " + ROBOT_SPOT_UTILS_ROOT_DIR + "spot-services/SpotCameras\n"
+        cmd1 = "cd " + ROBOT_SPOT_UTILS_ROOT_DIR + "/spot-services/SpotCameras\n"
         self.sshProc.stdin.write(cmd1)
         cmd2 = "docker-compose down\n"
         self.sshProc.stdin.write(cmd2)

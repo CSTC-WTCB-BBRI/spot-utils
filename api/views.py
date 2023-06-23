@@ -4,7 +4,6 @@
 
 # Imports
 import os
-import time
 
 ## Django REST framework
 from rest_framework.views import APIView
@@ -31,6 +30,10 @@ load_dotenv(ROOT_DIR + '.env')
 ROBOT_IP = os.getenv('ROBOT_IP')
 GUID = os.getenv('GUID')
 SECRET = os.getenv('SECRET')
+
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 # Variables
 camera = None
@@ -146,19 +149,14 @@ def startSpotCamerasImageServiceView(request):
     global gstLoopbackHelper
     gstLoopbackHelper = GstLoopbackHelper()
     gstLoopbackHelper.start()
+    logger.info('Starting GST Loopback')
+
     global spotCamerasImageServiceHelper
     spotCamerasImageServiceHelper = SpotCamerasImageServiceHelper()
     spotCamerasImageServiceHelper.start()
-    return HttpResponse('Started SpotCameras image service on the robot.')
+    logger.info('Starting SpotCameras service')
 
-def stopGstLoopbackView(request):
-    """
-    API endpoint for stopping the gst_loopback script on Spot
-    """
-    global gstLoopbackHelper
-    if gstLoopbackHelper is not None:
-        gstLoopbackHelper.stop()
-    return HttpResponse('Stopped gst_loopback on the robot.')
+    return HttpResponse('Started SpotCameras image service on the robot.')
 
 def stopSpotCamerasImageServiceView(request):
     """
@@ -166,9 +164,12 @@ def stopSpotCamerasImageServiceView(request):
     """
     global spotCamerasImageServiceHelper
     if spotCamerasImageServiceHelper is not None:
+        logger.info('Stopping SpotCameras service')
         spotCamerasImageServiceHelper.stop()
-    time.sleep(5)
+
     global gstLoopbackHelper
     if gstLoopbackHelper is not None:
+        logger.info('Stopping GST Loopback')
         gstLoopbackHelper.stop()
+    
     return HttpResponse('Stopped SpotCameras image service on the robot.')
