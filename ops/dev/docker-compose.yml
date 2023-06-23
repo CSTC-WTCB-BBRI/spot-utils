@@ -15,9 +15,6 @@ services:
       - ../..:/app
       - kvstore_data:/app/data
       - staticfiles:/app/staticfiles
-      - $SSH_AUTH_SOCK:$SSH_AUTH_SOCK
-    environment:
-      - SSH_AUTH_SOCK=$SSH_AUTH_SOCK
   nginx:
     hostname: nginx
     build:
@@ -27,7 +24,7 @@ services:
       - app_env
       - app_env.secrets
     ports:
-      - ${APP_PORT:-80}:80
+      - ${APP_PORT:-21888}:80
     depends_on:
       - app
     volumes:

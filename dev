@@ -7,4 +7,4 @@ if [ ! -f "${runpath}/app_env.secrets" ]; then
     (cd ${runpath} && touch app_env.secrets)
 fi
 
-(cd ${runpath} && docker compose $@)
+(cd ${runpath} && docker-compose $@)
