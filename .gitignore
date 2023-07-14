@@ -103,7 +103,6 @@ celerybeat.pid
 
 # Environments
 .env
-!/ops/dev/.env
 .dockerenv
 .venv
 env/

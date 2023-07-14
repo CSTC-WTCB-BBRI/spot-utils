@@ -1,10 +1,10 @@
 #!/bin/sh
 set -e
 
-runpath="$( cd "$(dirname "$0")/ops/dev" ; pwd -P )"
+runpath="$( cd "$(dirname "$0")/ops/prod" ; pwd -P )"
 
 if [ ! -f "${runpath}/app_env.secrets" ]; then
     (cd ${runpath} && touch app_env.secrets)
 fi
 
-(cd ${runpath} && docker compose $@)
+(cd ${runpath} && docker-compose $@)
