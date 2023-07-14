@@ -34,11 +34,11 @@ class Pointcloud(APIView):
     """
     Pointcloud web page management
     """
-    def get(self, request, format=None):
+    def get(self, request, name, format=None):
         """
         Get the Pointcloud web page
         """
-        return render(request, 'web/pointcloud.html', {})
+        return render(request, 'web/pointcloud.html', { 'name': name })
 
 class PointcloudIndex(APIView):
     """
@@ -48,4 +48,15 @@ class PointcloudIndex(APIView):
         """
         Get the list of available Pointclouds
         """
-        return render(request, 'web/pointcloud_index.html', {})
+        pointclouds = [
+            {
+                'name': 'pointcloud1',
+                'date': '13.07.2023'
+            },
+            {
+                'name': 'pointcloud2',
+                'date': '14.07.2023'
+            },
+        ]
+        context = { 'pointclouds': pointclouds }
+        return render(request, 'web/pointcloud_index.html', context)
