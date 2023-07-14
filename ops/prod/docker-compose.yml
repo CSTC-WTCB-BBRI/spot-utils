@@ -15,6 +15,7 @@ services:
       - ../..:/app
       - kvstore_data:/app/data
       - staticfiles:/app/staticfiles
+      - ${DATA_DIR}:/app/staticfiles/data
       - /home/spot/.ssh:/root/.ssh
   nginx:
     hostname: nginx
