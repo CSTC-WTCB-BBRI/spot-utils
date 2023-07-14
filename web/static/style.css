@@ -33,6 +33,6 @@ th, td {
   padding: 8px;
 }
 
-#refresh_button {
+#refresh_button, #dashboard_button {
   margin-bottom: 16px;
 }

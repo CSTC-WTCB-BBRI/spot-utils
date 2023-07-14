@@ -10,6 +10,8 @@
             <h1>POINTCLOUD INDEX</h1>
         </header>
 
+        <button id="dashboard_button" onclick="redirectToDashboard()">Return to Dashboard</button>
+
         <div id="refresh_button">
             <button onclick="collectPointclouds()">Refresh Pointcloud List</button>
             <p id="refreshing" style="display: none;">Refreshing...</p>
@@ -18,13 +20,11 @@
         <script>
             let loading = false;
             
-            function collectPointclouds() {
+            const collectPointclouds = () => {
                 loading = true;
                 document.getElementById('refreshing').style.display = 'block';
 
-                fetch("{% url 'api-pointclouds' %}", {
-                    method: 'POST'
-                })
+                fetch("{% url 'api-pointclouds' %}", { method: 'POST' })
                     .then(response => {
                         loading = false;
                         document.getElementById('refreshing').style.display = 'none';
@@ -43,6 +43,10 @@
                         console.error("An error occurred while collecting new pointclouds:", error);
                     });
             }
+
+            const redirectToDashboard = () => {
+                window.location.href = "{% url 'web-dashboard' %}";
+            }
         </script>        
 
         <table>
@@ -55,9 +59,9 @@
             <tbody>
                 {% for pointcloud in pointclouds %}
                 <tr>
-                    <td><a href="{% url 'web-pointcloud' pointcloud.name %}">{{ pointcloud.name }}</a></td>
+                    <td><a href="{% url 'web-pointcloud' pointcloud.name %}" target="_blank">{{ pointcloud.name }}</a></td>
                     <td>{{ pointcloud.date }}</td>
-                </tr>
+                </tr>                
                 {% endfor %}
             </tbody>
         </table>

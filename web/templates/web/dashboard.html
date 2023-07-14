@@ -45,6 +45,10 @@
             img.src = "api/camera?camera=" + cameraRequest;
         }
 
+        const redirectToPointcloudIndex = () => {
+            window.location.href = "{% url 'web-pointcloud-index' %}";
+        }
+
         window.addEventListener("pagehide", pageHideListener);
         window.addEventListener("beforeunload", beforeUnloadListener);
     </script>
@@ -65,7 +69,7 @@
         </select>
 
         <div class="center" id="button-container">
-            <button>Pointclouds</button>
+            <button onclick="redirectToPointcloudIndex()">Pointclouds</button>
             <button>Start Mission</button>
         </div>
     </body>
