@@ -39,3 +39,13 @@ class Pointcloud(APIView):
         Get the Pointcloud web page
         """
         return render(request, 'web/pointcloud.html', {})
+
+class PointcloudIndex(APIView):
+    """
+    Pointcloud index web page
+    """
+    def get(self, request, format=None):
+        """
+        Get the list of available Pointclouds
+        """
+        return render(request, 'web/pointcloud_index.html', {})
