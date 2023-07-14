@@ -4,6 +4,7 @@
 
 # Imports
 import os
+import datetime
 
 # Local imports
 ## Environment variables
@@ -44,7 +45,20 @@ class AvailablePointcloudsHelper(object):
         """
         Outputs the list of available pointclouds.
         """
-        pass
+        pointcloud_context = []
+        for pointcloud in self.pointclouds:
+            timestamp = pointcloud[4:]
+            try:
+                date = datetime.datetime.strptime(timestamp, "%Y%m%d%H%M%S")
+                formatted_date = date.strftime("%d/%m/%Y %H:%M:%S")
+                pointcloud_object = {
+                    'name': pointcloud,
+                    'date': formatted_date
+                }
+                pointcloud_context.append(pointcloud_object)
+            except ValueError:
+                continue
+        return pointcloud_context
 
     def collect_new_pointclouds(self):
         """
