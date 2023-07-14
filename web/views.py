@@ -8,6 +8,8 @@ from django.shortcuts import render
 ## Django REST framework
 from rest_framework.views import APIView
 
+# Local Imports
+from api.scripts.available_pointclouds_helper import AvailablePointcloudsHelper
 
 # Main
 class Auth(APIView):
@@ -48,15 +50,7 @@ class PointcloudIndex(APIView):
         """
         Get the list of available Pointclouds
         """
-        pointclouds = [
-            {
-                'name': 'pointcloud1',
-                'date': '13.07.2023'
-            },
-            {
-                'name': 'pointcloud2',
-                'date': '14.07.2023'
-            },
-        ]
+        helper = AvailablePointcloudsHelper()
+        pointclouds = helper.list()
         context = { 'pointclouds': pointclouds }
         return render(request, 'web/pointcloud_index.html', context)

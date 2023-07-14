@@ -5,6 +5,7 @@
 # Imports
 import os
 import datetime
+import time
 
 # Local imports
 ## Environment variables
@@ -43,7 +44,7 @@ class AvailablePointcloudsHelper(object):
     
     def list(self):
         """
-        Outputs the list of available pointclouds.
+        Outputs the list of available pointclouds, sorted by date.
         """
         pointcloud_context = []
         for pointcloud in self.pointclouds:
@@ -51,14 +52,18 @@ class AvailablePointcloudsHelper(object):
             try:
                 date = datetime.datetime.strptime(timestamp, "%Y%m%d%H%M%S")
                 formatted_date = date.strftime("%d/%m/%Y %H:%M:%S")
+                unix_timestamp = int(time.mktime(date.timetuple()))
                 pointcloud_object = {
                     'name': pointcloud,
-                    'date': formatted_date
+                    'date': formatted_date,
+                    'timestamp': unix_timestamp
                 }
                 pointcloud_context.append(pointcloud_object)
             except ValueError:
                 continue
-        return pointcloud_context
+        
+        sorted_pointclouds = sorted(pointcloud_context, key=lambda x: x['timestamp'], reverse=True)
+        return sorted_pointclouds
 
     def collect_new_pointclouds(self):
         """
