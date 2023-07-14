@@ -1,3 +1,7 @@
+body {
+  text-align: center;
+}
+
 .center {
   display: block;
   margin: 0 auto;
@@ -12,4 +16,23 @@
 
 .text-center {
   text-align: center;
+}
+
+#button-container {
+  margin-top: 16px;
+}
+
+table {
+  width: 60%;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+#refresh_button {
+  margin-bottom: 16px;
 }
