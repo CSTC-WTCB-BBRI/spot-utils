@@ -45,6 +45,10 @@
             img.src = "api/camera?camera=" + cameraRequest;
         }
 
+        const redirectToPointcloudIndex = () => {
+            window.location.href = "{% url 'web-pointcloud-index' %}";
+        }
+
         window.addEventListener("pagehide", pageHideListener);
         window.addEventListener("beforeunload", beforeUnloadListener);
     </script>
@@ -63,5 +67,10 @@
             <option value="back_fisheye_image">Back Fisheye Camera</option>
             <option value="video99">RICOH THETA Z1</option>
         </select>
+
+        <div class="center" id="button-container">
+            <button onclick="redirectToPointcloudIndex()">Pointclouds</button>
+            <button>Start Mission</button>
+        </div>
     </body>
 </html>

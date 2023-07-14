@@ -20,6 +20,7 @@ from .scripts.helloSpot import main
 from .scripts.spot_cameras import gen, SpotCameras
 from .scripts.gst_loopback_helper import GstLoopbackHelper
 from .scripts.spot_cameras_image_service_helper import SpotCamerasImageServiceHelper
+from .scripts.available_pointclouds_helper import AvailablePointcloudsHelper
 
 ## Environment variables
 from dotenv import load_dotenv
@@ -173,3 +174,30 @@ def stopSpotCamerasImageServiceView(request):
         gstLoopbackHelper.stop()
     
     return HttpResponse('Stopped SpotCameras image service on the robot.')
+
+class Pointclouds(APIView):
+    """
+    API endpoint for pointcloud management
+    """
+    def get(self, request, format=None):
+        """
+        List available pointclouds (in the `/staticfiles/pointclouds` directory)
+        """
+        pointclouds = [
+            {
+                'name': 'pointcloud1',
+                'date': '13.07.2023'
+            },
+            {
+                'name': 'pointcloud2',
+                'date': '14.07.2023'
+            },
+        ]
+        return Response(pointclouds)
+    
+    def post(self, request, format=None):
+        """
+        Collect new pointclouds placed in the data folder.
+        """
+        helper = AvailablePointcloudsHelper()
+        return HttpResponse(helper.collect_new_pointclouds())

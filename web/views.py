@@ -8,6 +8,8 @@ from django.shortcuts import render
 ## Django REST framework
 from rest_framework.views import APIView
 
+# Local Imports
+from api.scripts.available_pointclouds_helper import AvailablePointcloudsHelper
 
 # Main
 class Auth(APIView):
@@ -34,8 +36,21 @@ class Pointcloud(APIView):
     """
     Pointcloud web page management
     """
-    def get(self, request, format=None):
+    def get(self, request, name, format=None):
         """
         Get the Pointcloud web page
         """
-        return render(request, 'web/pointcloud.html', {})
+        return render(request, 'web/pointcloud.html', { 'name': name })
+
+class PointcloudIndex(APIView):
+    """
+    Pointcloud index web page
+    """
+    def get(self, request, format=None):
+        """
+        Get the list of available Pointclouds
+        """
+        helper = AvailablePointcloudsHelper()
+        pointclouds = helper.list()
+        context = { 'pointclouds': pointclouds }
+        return render(request, 'web/pointcloud_index.html', context)

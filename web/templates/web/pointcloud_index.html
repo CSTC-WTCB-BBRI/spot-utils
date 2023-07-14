@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>spot-utils - pointcloud index</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+    </head>
+    <body>
+        <header>
+            <h1>POINTCLOUD INDEX</h1>
+        </header>
+
+        <button id="dashboard_button" onclick="redirectToDashboard()">Return to Dashboard</button>
+
+        <div id="refresh_button">
+            <button onclick="collectPointclouds()">Refresh Pointcloud List</button>
+            <p id="refreshing" style="display: none;">Refreshing...</p>
+        </div>
+
+        <script>
+            let loading = false;
+            
+            const collectPointclouds = () => {
+                loading = true;
+                document.getElementById('refreshing').style.display = 'block';
+
+                fetch("{% url 'api-pointclouds' %}", { method: 'POST' })
+                    .then(response => {
+                        loading = false;
+                        document.getElementById('refreshing').style.display = 'none';
+
+                        if (response.ok) {
+                            console.log("New pointclouds collected successfully.");
+                            location.reload();
+                        } else {
+                            console.error("Failed to collect new pointclouds.");
+                        }
+                    })
+                    .catch(error => {
+                        loading = false;
+                        document.getElementById('refreshing').style.display = 'none';
+
+                        console.error("An error occurred while collecting new pointclouds:", error);
+                    });
+            }
+
+            const redirectToDashboard = () => {
+                window.location.href = "{% url 'web-dashboard' %}";
+            }
+        </script>        
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pointcloud in pointclouds %}
+                <tr>
+                    <td><a href="{% url 'web-pointcloud' pointcloud.name %}" target="_blank">{{ pointcloud.name }}</a></td>
+                    <td>{{ pointcloud.date }}</td>
+                </tr>                
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>

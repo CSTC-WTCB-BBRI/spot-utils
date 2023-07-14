@@ -54,7 +54,7 @@
 			$("#menu_appearance").next().show();
 		});
 		
-		Potree.loadPointCloud("../../static/pointclouds/spot/metadata.json", "spot", function(e){
+		Potree.loadPointCloud("../../static/data/{{ name }}/pointclouds/spot/metadata.json", "spot", function(e){
 			viewer.scene.addPointCloud(e.pointcloud);
 			
 			let material = e.pointcloud.material;
