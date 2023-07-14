@@ -4,10 +4,9 @@
 set -e
 
 IMAGE_NAME="ghcr.io/cstc-wtcb-bbri/spotutils.base"
-TAG=${TAG:-"latest"}
+TAG=${TAG:-"prod"}
 
 # ABSOLUTE PATH OF THIS SCRIPT'S DIRECTORY
 runpath="$( cd "$(dirname "$0")" ; pwd -P )"
 (cd ${runpath} &&
-    docker build --file ${runpath}/Dockerfile --pull --tag $IMAGE_NAME:$TAG ../.. &&
-    docker push $IMAGE_NAME:$TAG)
+    docker build --file ${runpath}/Dockerfile --pull --tag $IMAGE_NAME:$TAG ../..)
