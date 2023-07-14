@@ -15,12 +15,51 @@
                 border: 1px solid black;
                 padding: 8px;
             }
+            #refresh_button {
+                margin-bottom: 16px;
+            }
         </style>
     </head>
     <body>
         <header>
             <h1>POINTCLOUD INDEX</h1>
         </header>
+
+        <div id="refresh_button">
+            <button onclick="collectPointclouds()">Refresh Pointcloud List</button>
+            <p id="refreshing" style="display: none;">Refreshing...</p>
+        </div>
+
+        <script>
+            let loading = false;
+            
+            function collectPointclouds() {
+                loading = true;
+                document.getElementById('refreshing').style.display = 'block';
+
+                fetch("{% url 'api-pointclouds' %}", {
+                    method: 'POST'
+                })
+                    .then(response => {
+                        loading = false;
+                        document.getElementById('refreshing').style.display = 'none';
+
+                        if (response.ok) {
+                            console.log("New pointclouds collected successfully.");
+                            location.reload();
+                        } else {
+                            console.error("Failed to collect new pointclouds.");
+                        }
+                    })
+                    .catch(error => {
+                        loading = false;
+                        document.getElementById('refreshing').style.display = 'none';
+
+                        console.error("An error occurred while collecting new pointclouds:", error);
+                    });
+            }
+        </script>        
+
         <table>
             <thead>
                 <tr>

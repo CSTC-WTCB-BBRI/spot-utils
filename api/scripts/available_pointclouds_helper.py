@@ -6,6 +6,7 @@
 import os
 import datetime
 import time
+import subprocess
 
 # Local imports
 ## Environment variables
@@ -69,4 +70,9 @@ class AvailablePointcloudsHelper(object):
         """
         Executes the `collectstatic` function to refresh the list of available pointclouds.
         """
-        pass
+        try:
+            subprocess.run(['python', 'manage.py', 'collectstatic', '--noinput'], check=True)
+            logger.info('collectstatic command executed successfully.')
+        except subprocess.CalledProcessError as e:
+            logger.error(f'An error occurred while executing collectstatic command: {e}')
+

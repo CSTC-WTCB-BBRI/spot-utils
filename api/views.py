@@ -20,6 +20,7 @@ from .scripts.helloSpot import main
 from .scripts.spot_cameras import gen, SpotCameras
 from .scripts.gst_loopback_helper import GstLoopbackHelper
 from .scripts.spot_cameras_image_service_helper import SpotCamerasImageServiceHelper
+from .scripts.available_pointclouds_helper import AvailablePointcloudsHelper
 
 ## Environment variables
 from dotenv import load_dotenv
@@ -193,3 +194,10 @@ class Pointclouds(APIView):
             },
         ]
         return Response(pointclouds)
+    
+    def post(self, request, format=None):
+        """
+        Collect new pointclouds placed in the data folder.
+        """
+        helper = AvailablePointcloudsHelper()
+        return HttpResponse(helper.collect_new_pointclouds())
