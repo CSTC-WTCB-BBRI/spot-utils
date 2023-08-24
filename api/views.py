@@ -225,26 +225,25 @@ class SpotSLAM(APIView):
         Start collecting LiDAR data with Spot-SLAM.
         """
         helper = SpotSLAMHelper()
-        helper.launch()
-        helper.authorize()
-        helper.start()
-        return "Started collecting LiDAR data."
+        ret_launch = helper.launch()
+        ret_auth = helper.authorize()
+        ret_start = helper.start()
+        return ret_launch + "##SEP##" + ret_auth + "##SEP##" + ret_start
     
     def _stop(self):
         """
         Stop collecting LiDAR data with Spot-SLAM.
         """
         helper = SpotSLAMHelper()
-        helper.stop()
-        return "Stopped collecting LiDAR data. Ready to export pointcloud."
+        ret_stop = helper.stop()
+        return ret_stop
         
     def _export(self):
         """
         Export collected LiDAR data to potree pointcloud format.
         """
         helper = SpotSLAMHelper()
-        helper.save()
-        helper.potree()
-        helper = None
-        return "Exported new potree pointcloud."
+        ret_save = helper.save()
+        ret_potree = helper.potree()
+        return ret_save + "###SEP###" + ret_potree
     

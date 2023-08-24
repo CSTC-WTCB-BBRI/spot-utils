@@ -15,6 +15,8 @@ edited by Nicolas Daxhelet
 import requests
 import os
 
+import json
+
 # Local imports
 ## Environment variables
 from dotenv import load_dotenv
@@ -33,42 +35,45 @@ class SpotSLAMHelper(object):
     """
     Helper class for interacting with the Spot-SLAM payload and generating new pointclouds
     """
-    ready_to_export = False
-
     def launch(self):
         """
         Construct a new SpotSLAMHelper instance by connecting to Spot,
           making sure the Spot-SLAM docker instance is started.
         """
-        requests.get(url + "/launch")
+        ret = requests.get(url + "/launch", verify=False)
+        return json.dumps(json.loads(ret.content)['msg'], indent=2)
     
     def authorize(self):
         """
         Authorize the Spot-SLAM payload to acces the LiDAR on the robot.
         """
-        requests.get(url + "/connect2Spot")
+        ret = requests.get(url + "/connect2Spot", verify=False)
+        return json.dumps(json.loads(ret.content)['msg'], indent=2)
     
     def start(self):
         """
         Start capturing LiDAR data with Spot-SLAM.
         """
-        requests.get(url + "/start_slam")
+        ret = requests.get(url + "/start_slam", verify=False)
+        return json.dumps(json.loads(ret.content)['msg'], indent=2)
     
     def stop(self):
         """
         Stop capturing LiDAR data with Spot-SLAM.
         """
-        requests.get(url + "/stop_slam")
-        self.ready_to_export = True
+        ret = requests.get(url + "/stop_slam", verify=False)
+        return json.loads(ret.content)['msg']
     
     def save(self):
         """
         Export captured LiDAR data in PCD pointcloud format.
         """
-        requests.get(url + "/save_map_slam/")
+        ret = requests.get(url + "/save_map_slam/", verify=False)
+        return json.dumps(json.loads(ret.content)['msg'], indent=2)
     
     def potree(self):
         """
         Export PCD pointcloud format to potree pointcloud format.
         """
-        requests.get(url + "/potree")
+        ret = requests.get(url + "/potree", verify=False)
+        return json.dumps(json.loads(ret.content)['msg'], indent=2)
