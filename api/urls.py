@@ -6,7 +6,7 @@
 from django.urls import path
 
 # Local imports
-from .views import ApiRoutes, HelloSpot, getCameraFeed, closeCameraFeed, startSpotCamerasImageServiceView, stopSpotCamerasImageServiceView, Pointclouds
+from .views import ApiRoutes, HelloSpot, getCameraFeed, closeCameraFeed, startSpotCamerasImageServiceView, stopSpotCamerasImageServiceView, Pointclouds, SpotSLAM
 
 
 # Main
@@ -18,6 +18,7 @@ from .views import ApiRoutes, HelloSpot, getCameraFeed, closeCameraFeed, startSp
 * /api/start-spot-camera        ->      Run SpotCameras image service
 * /api/stop-spot-camera         ->      Stop SpotCameras image service
 * /api/pointclouds              ->      List available pointclouds
+* /api/spot-slam                ->      Generate new pointcloud
 """
 urlpatterns = [
     path('', ApiRoutes.as_view(), name='api-routes'),
@@ -27,4 +28,5 @@ urlpatterns = [
     path('start-spot-cameras/', startSpotCamerasImageServiceView, name='api-start-spot-cameras'),
     path('stop-spot-cameras/', stopSpotCamerasImageServiceView, name='api-stop-spot-cameras'),
     path('pointclouds/', Pointclouds.as_view(), name='api-pointclouds'),
+    path('spot-slam/', SpotSLAM.as_view(), name='api-spot-slam'),
 ]

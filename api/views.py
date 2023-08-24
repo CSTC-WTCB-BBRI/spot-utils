@@ -21,6 +21,7 @@ from .scripts.spot_cameras import gen, SpotCameras
 from .scripts.gst_loopback_helper import GstLoopbackHelper
 from .scripts.spot_cameras_image_service_helper import SpotCamerasImageServiceHelper
 from .scripts.available_pointclouds_helper import AvailablePointcloudsHelper
+from .scripts.spot_slam import SpotSLAMHelper
 
 ## Environment variables
 from dotenv import load_dotenv
@@ -40,6 +41,7 @@ logger = logging.getLogger(__name__)
 camera = None
 gstLoopbackHelper = None
 spotCamerasImageServiceHelper = None
+spotSlamHelper = None
 
 
 # Main
@@ -201,3 +203,48 @@ class Pointclouds(APIView):
         """
         helper = AvailablePointcloudsHelper()
         return HttpResponse(helper.collect_new_pointclouds())
+    
+class SpotSLAM(APIView):
+    """
+    API endpoint for generating new pointclouds
+    """
+    def post(self, request, format=None):
+        """
+        Endpoint disambiguation.
+        """
+        slam_request = request.GET.get('slam', 'start')
+        if slam_request == "start":
+            return Response(self._start())
+        elif slam_request == "export":
+            return Response(self._export())
+        else:
+            return Response(self._stop())
+        
+    def _start(self):
+        """
+        Start collecting LiDAR data with Spot-SLAM.
+        """
+        helper = SpotSLAMHelper()
+        helper.launch()
+        helper.authorize()
+        helper.start()
+        return "Started collecting LiDAR data."
+    
+    def _stop(self):
+        """
+        Stop collecting LiDAR data with Spot-SLAM.
+        """
+        helper = SpotSLAMHelper()
+        helper.stop()
+        return "Stopped collecting LiDAR data. Ready to export pointcloud."
+        
+    def _export(self):
+        """
+        Export collected LiDAR data to potree pointcloud format.
+        """
+        helper = SpotSLAMHelper()
+        helper.save()
+        helper.potree()
+        helper = None
+        return "Exported new potree pointcloud."
+    
