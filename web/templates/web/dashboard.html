@@ -67,10 +67,80 @@
             <option value="back_fisheye_image">Back Fisheye Camera</option>
             <option value="video99">RICOH THETA Z1</option>
         </select>
-
+        
         <div class="center" id="button-container">
             <button onclick="redirectToPointcloudIndex()">Pointclouds</button>
-            <button>Start Mission</button>
+            <button id="start-button" onclick="generatePointcloud()">Generate Pointcloud</button>
+            <button id="stop-button" style="display: none;" onclick="stopMissionAndGeneratePointcloud()">Stop Mission & Generate Pointcloud</button>
         </div>
+
+        <p id="collecting" style="display: none;">Collecting data...</p>
+        <p id="stopping" style="display: none;">Stopping data collection...</p>
+        <p id="generating" style="display: none;">Generating pointcloud...</p>
+        
+        <div id="mission-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <p>Mission Overview</p>
+        
+                <button class="center" onclick="startMission()">Start Mission</button>
+            </div>
+        </div>
+
+        <script>
+            const modal = document.getElementById("mission-modal");
+            const closeModalBtn = document.getElementById("closeModal");
+            const startBtn = document.getElementById("start-button");
+            const collecting = document.getElementById("collecting");
+            const stopping = document.getElementById("stopping");
+            const stopBtn = document.getElementById("stop-button");
+            const generating = document.getElementById("generating");
+            
+            const openModal = () => {
+                modal.style.display = "block";
+            };
+            
+            const closeModal = () => {
+                modal.style.display = "none";
+            };
+            
+            const generatePointcloud = () => {
+                openModal();
+            };
+            
+            const startMission = () => {
+                fetch('api/spot-slam/?slam=start', {
+                    method: 'POST'
+                })
+                .then(response => {
+                    collecting.style.display = '';
+                    startBtn.style.display = 'none';
+                    stopBtn.style.display = '';
+                    closeModal();
+                })
+            };
+            
+            const stopMissionAndGeneratePointcloud = () => {
+                collecting.style.display = 'none';
+                stopping.style.display = '';
+                stopBtn.style.display = 'none';
+                fetch('api/spot-slam/?slam=stop', {
+                    method: 'POST'
+                })
+                .then(response => {
+                    stopping.style.display = 'none';
+                    generating.style.display = '';
+                    return fetch('api/spot-slam/?slam=export', {
+                        method: 'POST'
+                    });
+                })
+                .then(secondResponse => {
+                    generating.style.display = 'none';
+                    startBtn.style.display = '';
+                });
+            };
+                
+            closeModalBtn.addEventListener("click", closeModal);
+        </script>
     </body>
 </html>
