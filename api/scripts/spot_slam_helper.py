@@ -62,7 +62,7 @@ class SpotSLAMHelper(object):
         Stop capturing LiDAR data with Spot-SLAM.
         """
         ret = requests.get(url + "/stop_slam", verify=False)
-        return json.loads(ret.content)['msg']
+        return json.dumps(json.loads(ret.content)['msg'], indent=2)
     
     def save(self):
         """

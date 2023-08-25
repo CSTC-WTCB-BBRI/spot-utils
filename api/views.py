@@ -10,7 +10,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import StreamingHttpResponse, HttpResponse
 from django.views.decorators import gzip
-from django.views.decorators.http import require_http_methods
 
 ## Bosdyn
 import bosdyn.client
@@ -23,7 +22,7 @@ from .scripts.spot_cameras import gen, SpotCameras
 from .scripts.gst_loopback_helper import GstLoopbackHelper
 from .scripts.spot_cameras_image_service_helper import SpotCamerasImageServiceHelper
 from .scripts.available_pointclouds_helper import AvailablePointcloudsHelper
-from .scripts.spot_slam import SpotSLAMHelper
+from .scripts.spot_slam_helper import SpotSLAMHelper
 
 ## Environment variables
 from dotenv import load_dotenv
@@ -207,17 +206,8 @@ class Pointclouds(APIView):
         """
         List available pointclouds (in the `/staticfiles/pointclouds` directory)
         """
-        pointclouds = [
-            {
-                'name': 'pointcloud1',
-                'date': '13.07.2023'
-            },
-            {
-                'name': 'pointcloud2',
-                'date': '14.07.2023'
-            },
-        ]
-        return Response(pointclouds)
+        helper = AvailablePointcloudsHelper()
+        return Response(helper.list())
     
     def post(self, request, format=None):
         """
@@ -247,25 +237,22 @@ class SpotSLAM(APIView):
         Start collecting LiDAR data with Spot-SLAM.
         """
         helper = SpotSLAMHelper()
-        ret_launch = helper.launch()
-        ret_auth = helper.authorize()
-        ret_start = helper.start()
-        return ret_launch + "##SEP##" + ret_auth + "##SEP##" + ret_start
+        helper.launch()
+        helper.authorize()
+        helper.start()
     
     def _stop(self):
         """
         Stop collecting LiDAR data with Spot-SLAM.
         """
         helper = SpotSLAMHelper()
-        ret_stop = helper.stop()
-        return ret_stop
+        helper.stop()
         
     def _export(self):
         """
         Export collected LiDAR data to potree pointcloud format.
         """
         helper = SpotSLAMHelper()
-        ret_save = helper.save()
-        ret_potree = helper.potree()
-        return ret_save + "###SEP###" + ret_potree
+        helper.save()
+        helper.potree()
     
