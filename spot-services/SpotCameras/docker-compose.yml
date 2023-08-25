@@ -1,0 +1,10 @@
+version: "3"
+services:
+  spot_cameras_image_service:
+    hostname: spot_cams
+    build: .
+    network_mode: host
+    restart: unless-stopped
+    devices:
+      - ${ORIG_VIDEO_DEV}:/dev/video99
+    command: --device-name 99

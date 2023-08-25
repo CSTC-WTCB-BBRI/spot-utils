@@ -1,0 +1,39 @@
+version: "3.3"
+services:
+  app:
+    hostname: django
+    build:
+      context: ../..
+      dockerfile: ops/dev/Dockerfile.spotutils
+    command: bash -c "python manage.py collectstatic --noinput && gunicorn -b 0.0.0.0:8000 --timeout 120 --log-level debug --workers 10 spotUtils.wsgi"
+    env_file:
+      - app_env
+      - app_env.secrets
+    expose:
+      - 8000
+    volumes:
+      - ../..:/app
+      - kvstore_data:/app/data
+      - staticfiles:/app/staticfiles
+      - ${DATA_DIR}:/app/web/static/data
+      - $SSH_AUTH_SOCK:$SSH_AUTH_SOCK
+    environment:
+      - SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+  nginx:
+    hostname: nginx
+    build:
+      context: ../..
+      dockerfile: ops/dev/Dockerfile.nginx
+    env_file:
+      - app_env
+      - app_env.secrets
+    ports:
+      - ${DEV_PORT:-443}:443
+    depends_on:
+      - app
+    volumes:
+      - staticfiles:/app/staticfiles
+
+volumes:
+  kvstore_data:
+  staticfiles:

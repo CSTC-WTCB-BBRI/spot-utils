@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>spot-utils - Dashboard</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+    </head>
+    <script>
+        let previousWasRicoh;
+        
+        const pageHideListener = (event) => {
+            fetch('api/close-camera', {
+                method: 'DELETE'
+            });
+        };
+
+        const beforeUnloadListener = (event) => {
+            fetch('api/close-camera', {
+                method: 'DELETE'
+            });
+        };
+
+        const changeCamera = (event) => {
+            let cameraRequest = document.getElementById("cameras").value;
+            let img = document.getElementById("camera-view");
+            if (cameraRequest === "video99") {
+                let response = window.confirm("RICOH THETA Z1 camera is plugged");
+                if (response) {
+                    previousWasRicoh = true;
+                    fetch('api/spot-cameras')
+                        .then(setTimeout(function() {
+                            waitForRicohFeedThenDisplay(img, cameraRequest);
+                        }, 6000))
+                } else {
+                    document.getElementById("cameras").value = "frontleft_fisheye_image";
+                    img.src = "api/camera?camera=" + cameraRequest;
+                }
+            } else if (previousWasRicoh) {
+                previousWasRicoh = false;
+                img.src = "api/camera?camera=" + cameraRequest;
+                fetch('api/stop-spot-cameras', {
+                    method: 'DELETE'
+                });
+            } else {
+                previousWasRicoh = false;
+                img.src = "api/camera?camera=" + cameraRequest;
+            }
+        };
+
+        const waitForRicohFeedThenDisplay = (img, cameraRequest) => {
+            img.src = "api/camera?camera=" + cameraRequest;
+        }
+
+        const redirectToPointcloudIndex = () => {
+            window.location.href = "{% url 'web-pointcloud-index' %}";
+        }
+
+        window.addEventListener("pagehide", pageHideListener);
+        window.addEventListener("beforeunload", beforeUnloadListener);
+    </script>
+    <body>
+        <header class="text-center">
+            <h1>DASHBOARD</h1>
+        </header>
+
+        <img src="api/camera?camera=frontleft_fisheye_image" class="image-center" id="camera-view">
+
+        <select name="cameras" id="cameras" class="center" onchange="changeCamera()">
+            <option value="frontleft_fisheye_image">Front Left Fisheye Camera</option>
+            <option value="frontright_fisheye_image">Front Right Fisheye Camera</option>
+            <option value="left_fisheye_image">Left Fisheye Camera</option>
+            <option value="right_fisheye_image">Right Fisheye Camera</option>
+            <option value="back_fisheye_image">Back Fisheye Camera</option>
+            <option value="video99">RICOH THETA Z1</option>
+        </select>
+        
+        <div class="center" id="button-container">
+            <button onclick="redirectToPointcloudIndex()">Pointclouds</button>
+            <button id="start-button" onclick="generatePointcloud()">Generate Pointcloud</button>
+            <button id="stop-button" style="display: none;" onclick="stopMissionAndGeneratePointcloud()">Stop Mission & Generate Pointcloud</button>
+        </div>
+
+        <p id="collecting" style="display: none;">Collecting data...</p>
+        <p id="stopping" style="display: none;">Stopping data collection...</p>
+        <p id="generating" style="display: none;">Generating pointcloud...</p>
+        
+        <div id="mission-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <p>Mission Overview</p>
+        
+                <button class="center" onclick="startMission()">Start Mission</button>
+            </div>
+        </div>
+
+        <script>
+            const modal = document.getElementById("mission-modal");
+            const closeModalBtn = document.getElementById("closeModal");
+            const startBtn = document.getElementById("start-button");
+            const collecting = document.getElementById("collecting");
+            const stopping = document.getElementById("stopping");
+            const stopBtn = document.getElementById("stop-button");
+            const generating = document.getElementById("generating");
+            
+            const openModal = () => {
+                modal.style.display = "block";
+            };
+            
+            const closeModal = () => {
+                modal.style.display = "none";
+            };
+            
+            const generatePointcloud = () => {
+                openModal();
+            };
+            
+            const startMission = () => {
+                fetch('api/spot-slam/?slam=start', {
+                    method: 'POST'
+                })
+                .then(response => {
+                    collecting.style.display = '';
+                    startBtn.style.display = 'none';
+                    stopBtn.style.display = '';
+                    closeModal();
+                })
+            };
+            
+            const stopMissionAndGeneratePointcloud = () => {
+                collecting.style.display = 'none';
+                stopping.style.display = '';
+                stopBtn.style.display = 'none';
+                fetch('api/spot-slam/?slam=stop', {
+                    method: 'POST'
+                })
+                .then(response => {
+                    stopping.style.display = 'none';
+                    generating.style.display = '';
+                    return fetch('api/spot-slam/?slam=export', {
+                        method: 'POST'
+                    });
+                })
+                .then(secondResponse => {
+                    generating.style.display = 'none';
+                    startBtn.style.display = '';
+                });
+            };
+                
+            closeModalBtn.addEventListener("click", closeModal);
+        </script>
+    </body>
+</html>
