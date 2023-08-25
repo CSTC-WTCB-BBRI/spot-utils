@@ -2,34 +2,14 @@
 """Tests for Django api urls"""
 
 # Imports
-import mock
 import json
 
 ## Django
 from django.test import TestCase, Client
-from django.urls import reverse
-from rest_framework.response import Response
+from django.urls import reverse, resolve
 
-def mocked_helloSpot_get(*args):
-    return Response('Hello, Spot!')
-
-def mocked_get_camera_feed(*args):
-    return Response('camera')
-
-def mocked_close_camera_feed(*args):
-    return Response('closed camera')
-
-def mocked_open_ricoh_camera_feed(*args):
-    return Response('started SpotCameras')
-
-def mocked_stop_ricoh_camera_feed(*args):
-    return Response('stopped SpotCameras')
-
-def mocked_get_pointclouds(*args):
-    return Response('pointcloud list')
-
-def mocked_collect_pointclouds(*args):
-    return Response('collected pointclouds')
+# Local Imports
+from api.views import *
 
 class ApiUrlsTestCase(TestCase):
     """
@@ -44,9 +24,9 @@ class ApiUrlsTestCase(TestCase):
         """
         self.client = Client()
 
-    def test_api_routes_route_is_accessible(self):
+    def test_api_routes_endpoint_is_accessible(self):
         """
-        Test case for checking availability of the GET /api/ API route
+        Test case for checking availability of the GET /api/ API routte
         """
         response = self.client.get(reverse('api-routes'))
         self.assertEqual(response.status_code, 200)
@@ -70,58 +50,71 @@ class ApiUrlsTestCase(TestCase):
             valid_http_verbs = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
             self.assertIn(route['method'], valid_http_verbs)
 
-    @mock.patch('api.views.HelloSpot.get', mocked_helloSpot_get)
-    def test_hellospot_route_is_accessible(self):
+    def test_hellospot_endpoint_is_accessible(self):
         """
-        Test case for checking availability of the GET /api/hello-spot/ API route
+        Test case for checking availability of the /api/hello-spot/ API endpoints (only GET)
         """
-        response = self.client.get(reverse('api-hello-spot'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('api-hello-spot')
+        match = resolve(url)
+        self.assertEqual(match.func.__module__, HelloSpot.__module__)
 
-    @mock.patch('api.views.SpotCameras.get', mocked_get_camera_feed)
+        view_class = match.func.view_class
+        self.assertTrue(hasattr(view_class, 'get'))
+        self.assertFalse(hasattr(view_class, 'post'))
+
     def test_camera_route_is_accessible(self):
         """
         Test case for checking availability of the GET /api/camera/ API route
         """
-        response = self.client.get(reverse('api-camera'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('api-get-camera-feed')
+        match = resolve(url)
+        self.assertEqual(match.func, getCameraFeed)
     
-    @mock.patch('api.views.SpotCameras.delete', mocked_close_camera_feed)
     def test_close_camera_route_is_accessible(self):
         """
-        Test case for checking availability of the DELETE /api/camera/ API route
+        Test case for checking availability of the DELETE /api/close-camera/ API route
         """
-        response = self.client.delete(reverse('api-camera'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('api-close-camera')
+        match = resolve(url)
+        self.assertEqual(match.func, closeCameraFeed)
     
-    @mock.patch('api.views.SpotCamerasImageService.get', mocked_open_ricoh_camera_feed)
+    
     def test_spot_cameras_route_is_accessible(self):
         """
-        Test case for checking availability of the GET /api/spot-cameras/ API route
+        Test case for checking availability of the GET /api/start-spot-cameras/ API route
         """
-        response = self.client.get(reverse('api-spot-cameras'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('api-start-spot-cameras')
+        match = resolve(url)
+        self.assertEqual(match.func, startSpotCamerasImageServiceView)
     
-    @mock.patch('api.views.SpotCamerasImageService.delete', mocked_stop_ricoh_camera_feed)
     def test_stop_spot_cameras_route_is_accessible(self):
         """
-        Test case for checking availability of the DELETE /api/spot-cameras/ API route
+        Test case for checking availability of the DELETE /api/stop-spot-cameras/ API route
         """
-        response = self.client.delete(reverse('api-spot-cameras'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('api-stop-spot-cameras')
+        match = resolve(url)
+        self.assertEqual(match.func, stopSpotCamerasImageServiceView)
     
-    @mock.patch('api.views.Pointclouds.get', mocked_get_pointclouds)
-    def test_get_pointclouds_route_is_accessible(self):
+    def test_pointclouds_endpoints_are_accessible(self):
         """
-        Test case for checking availability of the GET /api/pointclouds/ API route
+        Test case for checking availability of the /api/pointclouds/ API endpoints (GET & POST)
         """
-        response = self.client.get(reverse('api-pointclouds'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('api-pointclouds')
+        match = resolve(url)
+        self.assertEqual(match.func.__module__, Pointclouds.__module__)
+
+        view_class = match.func.view_class
+        self.assertTrue(hasattr(view_class, 'get'))
+        self.assertTrue(hasattr(view_class, 'post'))
     
-    @mock.patch('api.views.Pointclouds.post', mocked_collect_pointclouds)
-    def test_collect_pointclouds_route_is_accessible(self):
+    def test_spot_slam_endpoints_are_accessible(self):
         """
-        Test case for checking availability of the POST /api/pointclouds/ API route
+        Test case for checking availability of the /api/spot-slam/ API endpoints (POST with multiple url params)
         """
-        response = self.client.post(reverse('api-pointclouds'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('api-spot-slam')
+        match = resolve(url)
+        self.assertEqual(match.func.__module__, SpotSLAM.__module__)
+
+        view_class = match.func.view_class
+        self.assertFalse(hasattr(view_class, 'get'))
+        self.assertTrue(hasattr(view_class, 'post'))

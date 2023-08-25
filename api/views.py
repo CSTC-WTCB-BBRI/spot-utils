@@ -10,12 +10,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import StreamingHttpResponse, HttpResponse
 from django.views.decorators import gzip
+from django.views.decorators.http import require_http_methods
 
 ## Bosdyn
 import bosdyn.client
 from bosdyn.client.image import ImageClient
 
 # Local imports
+from .decorators import require_get, require_delete
 from .scripts.helloSpot import main
 from .scripts.spot_cameras import gen, SpotCameras
 from .scripts.gst_loopback_helper import GstLoopbackHelper
@@ -41,7 +43,6 @@ logger = logging.getLogger(__name__)
 camera = None
 gstLoopbackHelper = None
 spotCamerasImageServiceHelper = None
-spotSlamHelper = None
 
 
 # Main
@@ -55,46 +56,64 @@ class ApiRoutes(APIView):
         """
         routes = [
             {
-                'Endpoint': '/hello-spot/',
+                'endpoint': '/hello-spot/',
                 'method': 'GET',
                 'body': None,
                 'description': 'Hello, Spot!'
             },
             {
-                'Endpoint': '/camera/',
+                'endpoint': '/camera/',
                 'method': 'GET',
                 'body': None,
                 'description': 'Get live camera feed from Spot\'s cameras'
             },
             {
-                'Endpoint': '/close-camera/',
-                'method': 'GET',
+                'endpoint': '/close-camera/',
+                'method': 'DELETE',
                 'body': None,
                 'description': 'Close live camera feed from Spot\'s cameras'
             },
             {
-                'Endpoint': '/start-gst-loopback',
-                'method': 'GET',
-                'body': None,
-                'description': 'Execute gst_loopback for RICOH THETA'
-            },
-            {
-                'Endpoint': '/stop-gst-loopback',
-                'method': 'GET',
-                'body': None,
-                'description': 'Stop gst_loopback for RICOH THETA'
-            },
-            {
-                'Endpoint': '/start-spot-cameras',
+                'endpoint': '/start-spot-cameras',
                 'method': 'GET',
                 'body': None,
                 'description': 'Execute SpotCameras image service'
             },
             {
-                'Endpoint': '/stop-spot-cameras',
-                'method': 'GET',
+                'endpoint': '/stop-spot-cameras',
+                'method': 'DELETE',
                 'body': None,
                 'description': 'Stop SpotCameras image service'
+            },
+            {
+                'endpoint': '/pointclouds',
+                'method': 'GET',
+                'body': None,
+                'description': 'List available services'
+            },
+            {
+                'endpoint': '/pointclouds',
+                'method': 'POST',
+                'body': None,
+                'description': 'Collect new pointclouds'
+            },
+            {
+                'endpoint': '/spot-slam?slam=start',
+                'method': 'POST',
+                'body': None,
+                'description': 'Start LiDAR data collection'
+            },
+            {
+                'endpoint': '/spot-slam?slam=stop',
+                'method': 'POST',
+                'body': None,
+                'description': 'Stop LiDAR data collection'
+            },
+            {
+                'endpoint': '/spot-slam?slam=start',
+                'method': 'POST',
+                'body': None,
+                'description': 'Export LiDAR data to potree pointcloud format'
             }
         ]
         return Response(routes)
@@ -110,7 +129,7 @@ class HelloSpot(APIView):
         main()
         return Response('Hello, Spot!')
 
-
+@require_get
 @gzip.gzip_page
 def getCameraFeed(request):
     """
@@ -136,6 +155,7 @@ def getCameraFeed(request):
     except:
         pass
 
+@require_delete
 def closeCameraFeed(request):
     """
     API endpoint for closing the camera live video feed
@@ -145,6 +165,7 @@ def closeCameraFeed(request):
         camera.__del__()
     return HttpResponse()
 
+@require_get
 def startSpotCamerasImageServiceView(request):
     """
     API endpoint for opening the RICOH THETA camera live video feed
@@ -161,6 +182,7 @@ def startSpotCamerasImageServiceView(request):
 
     return HttpResponse('Started SpotCameras image service on the robot.')
 
+@require_delete
 def stopSpotCamerasImageServiceView(request):
     """
     API endpoint for closing the RICOH THETA camera live video feed

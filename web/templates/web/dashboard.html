@@ -9,13 +9,13 @@
         let previousWasRicoh;
         
         const pageHideListener = (event) => {
-            fetch('api/camera', {
+            fetch('api/close-camera', {
                 method: 'DELETE'
             });
         };
 
         const beforeUnloadListener = (event) => {
-            fetch('api/camera', {
+            fetch('api/close-camera', {
                 method: 'DELETE'
             });
         };
@@ -38,7 +38,7 @@
             } else if (previousWasRicoh) {
                 previousWasRicoh = false;
                 img.src = "api/camera?camera=" + cameraRequest;
-                fetch('api/spot-cameras', {
+                fetch('api/stop-spot-cameras', {
                     method: 'DELETE'
                 });
             } else {

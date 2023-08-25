@@ -54,7 +54,8 @@ class TestAvailablePointcloudsHelper(TestCase):
     self.assertEqual(result, expected_result)
   
   @mock.patch('api.scripts.available_pointclouds_helper.subprocess.run')
-  def test_collect_new_pointclouds_success(self, mock_subprocess_run):
+  @mock.patch('logging.Logger.info')
+  def test_collect_new_pointclouds_success(self, mock_logger_info, mock_subprocess_run):
     helper = AvailablePointcloudsHelper()
 
     # Mock subprocess.run to return successfully
@@ -65,7 +66,8 @@ class TestAvailablePointcloudsHelper(TestCase):
     mock_subprocess_run.assert_called_once_with(['python', 'manage.py', 'collectstatic', '--noinput'], check=True)
 
   @mock.patch('api.scripts.available_pointclouds_helper.subprocess.run')
-  def test_collect_new_pointclouds_error(self, mock_subprocess_run):
+  @mock.patch('logging.Logger.error')
+  def test_collect_new_pointclouds_error(self, mock_logger_error, mock_subprocess_run):
     helper = AvailablePointcloudsHelper()
 
     mock_subprocess_run.side_effect = subprocess.CalledProcessError(returncode=1, cmd='collectstatic')
