@@ -16,12 +16,13 @@ import bosdyn.client
 from bosdyn.client.image import ImageClient
 
 # Local imports
+from .decorators import require_get, require_delete
 from .scripts.helloSpot import main
 from .scripts.spot_cameras import gen, SpotCameras
 from .scripts.gst_loopback_helper import GstLoopbackHelper
 from .scripts.spot_cameras_image_service_helper import SpotCamerasImageServiceHelper
 from .scripts.available_pointclouds_helper import AvailablePointcloudsHelper
-from .scripts.spot_slam import SpotSLAMHelper
+from .scripts.spot_slam_helper import SpotSLAMHelper
 
 ## Environment variables
 from dotenv import load_dotenv
@@ -41,7 +42,6 @@ logger = logging.getLogger(__name__)
 camera = None
 gstLoopbackHelper = None
 spotCamerasImageServiceHelper = None
-spotSlamHelper = None
 
 
 # Main
@@ -55,46 +55,64 @@ class ApiRoutes(APIView):
         """
         routes = [
             {
-                'Endpoint': '/hello-spot/',
+                'endpoint': '/hello-spot/',
                 'method': 'GET',
                 'body': None,
                 'description': 'Hello, Spot!'
             },
             {
-                'Endpoint': '/camera/',
+                'endpoint': '/camera/',
                 'method': 'GET',
                 'body': None,
                 'description': 'Get live camera feed from Spot\'s cameras'
             },
             {
-                'Endpoint': '/close-camera/',
-                'method': 'GET',
+                'endpoint': '/close-camera/',
+                'method': 'DELETE',
                 'body': None,
                 'description': 'Close live camera feed from Spot\'s cameras'
             },
             {
-                'Endpoint': '/start-gst-loopback',
-                'method': 'GET',
-                'body': None,
-                'description': 'Execute gst_loopback for RICOH THETA'
-            },
-            {
-                'Endpoint': '/stop-gst-loopback',
-                'method': 'GET',
-                'body': None,
-                'description': 'Stop gst_loopback for RICOH THETA'
-            },
-            {
-                'Endpoint': '/start-spot-cameras',
+                'endpoint': '/start-spot-cameras',
                 'method': 'GET',
                 'body': None,
                 'description': 'Execute SpotCameras image service'
             },
             {
-                'Endpoint': '/stop-spot-cameras',
-                'method': 'GET',
+                'endpoint': '/stop-spot-cameras',
+                'method': 'DELETE',
                 'body': None,
                 'description': 'Stop SpotCameras image service'
+            },
+            {
+                'endpoint': '/pointclouds',
+                'method': 'GET',
+                'body': None,
+                'description': 'List available services'
+            },
+            {
+                'endpoint': '/pointclouds',
+                'method': 'POST',
+                'body': None,
+                'description': 'Collect new pointclouds'
+            },
+            {
+                'endpoint': '/spot-slam?slam=start',
+                'method': 'POST',
+                'body': None,
+                'description': 'Start LiDAR data collection'
+            },
+            {
+                'endpoint': '/spot-slam?slam=stop',
+                'method': 'POST',
+                'body': None,
+                'description': 'Stop LiDAR data collection'
+            },
+            {
+                'endpoint': '/spot-slam?slam=start',
+                'method': 'POST',
+                'body': None,
+                'description': 'Export LiDAR data to potree pointcloud format'
             }
         ]
         return Response(routes)
@@ -110,7 +128,7 @@ class HelloSpot(APIView):
         main()
         return Response('Hello, Spot!')
 
-
+@require_get
 @gzip.gzip_page
 def getCameraFeed(request):
     """
@@ -136,6 +154,7 @@ def getCameraFeed(request):
     except:
         pass
 
+@require_delete
 def closeCameraFeed(request):
     """
     API endpoint for closing the camera live video feed
@@ -145,6 +164,7 @@ def closeCameraFeed(request):
         camera.__del__()
     return HttpResponse()
 
+@require_get
 def startSpotCamerasImageServiceView(request):
     """
     API endpoint for opening the RICOH THETA camera live video feed
@@ -161,6 +181,7 @@ def startSpotCamerasImageServiceView(request):
 
     return HttpResponse('Started SpotCameras image service on the robot.')
 
+@require_delete
 def stopSpotCamerasImageServiceView(request):
     """
     API endpoint for closing the RICOH THETA camera live video feed
@@ -185,17 +206,8 @@ class Pointclouds(APIView):
         """
         List available pointclouds (in the `/staticfiles/pointclouds` directory)
         """
-        pointclouds = [
-            {
-                'name': 'pointcloud1',
-                'date': '13.07.2023'
-            },
-            {
-                'name': 'pointcloud2',
-                'date': '14.07.2023'
-            },
-        ]
-        return Response(pointclouds)
+        helper = AvailablePointcloudsHelper()
+        return Response(helper.list())
     
     def post(self, request, format=None):
         """
@@ -225,25 +237,22 @@ class SpotSLAM(APIView):
         Start collecting LiDAR data with Spot-SLAM.
         """
         helper = SpotSLAMHelper()
-        ret_launch = helper.launch()
-        ret_auth = helper.authorize()
-        ret_start = helper.start()
-        return ret_launch + "##SEP##" + ret_auth + "##SEP##" + ret_start
+        helper.launch()
+        helper.authorize()
+        helper.start()
     
     def _stop(self):
         """
         Stop collecting LiDAR data with Spot-SLAM.
         """
         helper = SpotSLAMHelper()
-        ret_stop = helper.stop()
-        return ret_stop
+        helper.stop()
         
     def _export(self):
         """
         Export collected LiDAR data to potree pointcloud format.
         """
         helper = SpotSLAMHelper()
-        ret_save = helper.save()
-        ret_potree = helper.potree()
-        return ret_save + "###SEP###" + ret_potree
+        helper.save()
+        helper.potree()
     

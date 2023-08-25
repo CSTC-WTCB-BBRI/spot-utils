@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>spot-utils - dashboard</title>
+        <title>spot-utils - Dashboard</title>
         {% load static %}
         <link rel="stylesheet" href="{% static 'style.css' %}">
     </head>
@@ -9,11 +9,15 @@
         let previousWasRicoh;
         
         const pageHideListener = (event) => {
-            fetch('api/close-camera')
+            fetch('api/close-camera', {
+                method: 'DELETE'
+            });
         };
 
         const beforeUnloadListener = (event) => {
-            fetch('api/close-camera')
+            fetch('api/close-camera', {
+                method: 'DELETE'
+            });
         };
 
         const changeCamera = (event) => {
@@ -23,7 +27,7 @@
                 let response = window.confirm("RICOH THETA Z1 camera is plugged");
                 if (response) {
                     previousWasRicoh = true;
-                    fetch('api/start-spot-cameras')
+                    fetch('api/spot-cameras')
                         .then(setTimeout(function() {
                             waitForRicohFeedThenDisplay(img, cameraRequest);
                         }, 6000))
@@ -34,7 +38,9 @@
             } else if (previousWasRicoh) {
                 previousWasRicoh = false;
                 img.src = "api/camera?camera=" + cameraRequest;
-                fetch('api/stop-spot-cameras')
+                fetch('api/stop-spot-cameras', {
+                    method: 'DELETE'
+                });
             } else {
                 previousWasRicoh = false;
                 img.src = "api/camera?camera=" + cameraRequest;

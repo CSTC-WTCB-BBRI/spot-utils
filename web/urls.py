@@ -14,7 +14,7 @@ from .views import Auth, Dashboard, Pointcloud, PointcloudIndex
 * /                     ->      Get the Dashboard web page
 * /auth/                ->      Get the Authentication web page
 * /pointcloud/          ->      Get the Pointcloud web page
-* /pointcloud_index/    ->      Get the Pointcloud web page
+* /pointcloud_index/    ->      Get the Pointcloud Index web page
 """
 urlpatterns = [
     path('auth/', Auth.as_view(), name='web-auth'),
