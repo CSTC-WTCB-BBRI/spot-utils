@@ -10,21 +10,22 @@ If running on a docker container, refer to [this document](./ops/README.md). Oth
 
 ### Environment Variables
 
-This project's python scripts use environment variables. These are stored within the ```.env``` file at the root of this project's directory.
+This project's python scripts use environment variables. These are stored within the `.env` file at the root of this project's directory.
 
-Create the .env file and paste the following inside it (values are placeholders):
+Create a new `.env` file and paste the following inside it (values are placeholders):
 
 ```bash
 BOSDYN_CLIENT_ADMIN_USERNAME=admin_user 
 BOSDYN_CLIENT_ADMIN_PASSWORD=admin_password
 BOSDYN_CLIENT_USERNAME=user
 BOSDYN_CLIENT_PASSWORD=password
-ROBOT_IP=192.168.80.3
+ROBOT_IP=WW.XX.YY.ZZ
 ROBOT_USERNAME=SPOT_CORE_USERNAME
-ROBOT_SSH_PORT=22
+ROBOT_SSH_PORT=XX
+SPOT_SLAM_PORT=YY
 ROBOT_SPOT_UTILS_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/spot-utils
 ROBOT_LIBUVC_THETA_SAMPLE_ROOT_DIR=/home/SPOT_CORE_USERNAME/src/libuvc-theta-sample
-SELF_IP=192.168.80.100
+SELF_IP=ZZ.YY.XX.WW
 ROBOT_ESTOP_TIMEOUT_SEC=5
 BOSDYN_CLIENT_LOGGING_VERBOSE=True
 GUID=GUID
@@ -65,11 +66,6 @@ Before creating a virtual environment for this project, you need to install and 
 ```bash
 pip install virtualenv virtualenvwrapper
 ```
-
-|   Package             |   Description     |
-|   ---                 |   ---             |
-|   virtualenv          |   [A tool for creating isolated virtual python environments](https://pypi.org/project/virtualenv/)    |
-|   virtualenvwrapper   |   [virtualenvwrapper is a set of extensions to Ian Bicking’s virtualenv tool](https://pypi.org/project/virtualenvwrapper/)    |
 
 Once both packages are installed, you will need to add the following lines to your ```~/.bashrc``` (or the equivalent for your current shell):
 
@@ -119,22 +115,6 @@ To install this project's Python dependencies to your newly created virtual envi
 ```bash
 pip install -r requirements.txt
 ```
-
-|   Package             |   Description     |
-|   ---                 |   ---             |
-|   Django              |   [Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design](https://pypi.org/project/Django/)    |
-|   djangorestframework |   [Awesome web-browsable Web APIs](https://pypi.org/project/djangorestframework/)    |
-|   bosdyn-client       |   [The bosdyn-client wheel contains client interfaces for interacting with the Boston Dynamics Spot API. The client interfaces implement the Remote Procedure Calls (RPCs) defined in the bosdyn-api wheel](https://pypi.org/project/bosdyn-client/)    |
-|   bosdyn-mission      |   [The bosdyn-mission wheel contains client interfaces and helper functionality for managing missions, which are part of the Boston Dynamics Spot API](https://pypi.org/project/bosdyn-mission/)    |
-|   bosdyn-choreography-client  |   [The bosdyn-choreography-client wheel contains client interfaces for interacting with the Boston Dynamics Choreography API](https://pypi.org/project/bosdyn-choreography-client/)    |
-|   Pillow  |   [Pillow is the friendly PIL fork by Alex Clark and Contributors. PIL is the Python Imaging Library by Fredrik Lundh and Contributors](https://pypi.org/project/Pillow/)    |
-|   six  |   [Six is a Python 2 and 3 compatibility library](https://pypi.org/project/six/)    |
-|   pyqt5  |   [Qt is set of cross-platform C++ libraries that implement high-level APIs for accessing many aspects of modern desktop and mobile systems](https://pypi.org/project/PyQt5/)    |
-|   python-dotenv  |   [Python-dotenv reads key-value pairs from a .env file and can set them as environment variables](https://pypi.org/project/python-dotenv/)    |
-|   mock    |   [mock is a library for testing in Python](https://pypi.org/project/mock/)  |
-|   numpy   |   [NumPy is the fundamental package for array computing with Python](https://pypi.org/project/numpy/)    |
-|   scipy   |   [SciPy (pronounced “Sigh Pie”) is an open-source software for mathematics, science, and engineering](https://pypi.org/project/scipy/)   |
-|   opencv-python   |   [Pre-built CPU-only OpenCV packages for Python.](https://pypi.org/project/opencv-python/)   |
 
 ### Set Up Database
 

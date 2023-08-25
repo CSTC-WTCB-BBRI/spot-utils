@@ -114,3 +114,14 @@ volumes:
 ```
 
 **NOTE**: You do not need to rewrite everything, only the things that change (refer to the [official Docker documentation](https://docs.docker.com/compose/extends/#understanding-multiple-compose-files)).
+
+## Tests
+
+All test files are located inside the /tests/ folder.
+
+### Execute All Tests
+
+cd to the root of the project's directory and run:
+```bash
+./dev run --rm app python manage.py test tests
+```
